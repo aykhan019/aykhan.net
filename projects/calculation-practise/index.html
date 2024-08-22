@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="index.css" />
+    <title>Number Calculation Practise | aykhan.net</title>
+  </head>
+  <body>
+    <!-- Header Start -->
+    <header>
+      <section class="headline">
+        <a id="text-logo" href="http://aykhan.net">aykhan.net</a>
+      </section>
+    </header>
+    <!-- Header End -->
+
+    <!-- Main Start -->
+    <main>
+      <div class="ui text container" style="margin-top: 20px">
+        <h1
+          class="ui header"
+          style="color: #0056b3 !important; text-align: center"
+        >
+          Number Calculation Practise
+        </h1>
+        <div class="ui form">
+          <div id="options">
+            <div class="field">
+              <label for="maxDigitCount">Maximum Digit Count</label>
+              <select class="ui dropdown select" id="maxDigitCount">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="operation">Operation</label>
+              <select class="ui dropdown select" id="operation">
+                <option value="+">+</option>
+                <option value="-">-</option>
+                <option value="*">*</option>
+                <option value="/">/</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="numVariables">Number of Variables</label>
+              <select class="ui dropdown select" id="numVariables">
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </div>
+          </div>
+
+          <button
+            class="ui primary button"
+            id="startButton"
+            onclick="startTest()"
+          >
+            Start Test
+          </button>
+        </div>
+        <div
+          id="question"
+          style="
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            font-weight: bolder;
+          "
+        ></div>
+        <div
+          class="ui action input"
+          style="margin-top: 10px; display: none"
+          id="container"
+        >
+          <input
+            type="text"
+            id="userAnswer"
+            placeholder="Your Answer"
+            onkeyup="handleKeyPress(event)"
+          />
+          <button
+            class="ui primary button"
+            style="margin-top: 20px"
+            onclick="checkAnswer()"
+          >
+            Submit Answer
+          </button>
+          <div
+            id="results"
+            style="margin-top: 20px; display: flex; gap: 5px"
+          ></div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer Start -->
+    <footer>
+      <p>
+        Copyright © Aykhan Ahmadzada 2023 -
+        <a href="https://aykhan.net" style="text-decoration: underline"
+          >aykhan.net</a
+        >
+      </p>
+    </footer>
+    <!-- Footer End -->
+    <script src="index.js"></script>
+  </body>
+</html>

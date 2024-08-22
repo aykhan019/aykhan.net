@@ -1,0 +1,18 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: linear-gradient(to bottom, #009933 0%, #99ff33 100%);
+}
+
+.center-image {
+    width: 30vh;
+    height: 60vh;
+    margin: auto;
+}

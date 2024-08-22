@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>React | Task 13 | aykhan.net</title>
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="https://res.cloudinary.com/dbriqxpaa/image/upload/v1680096853/Logo/logo-xl-ico_qzbf7d.ico"
+    />
+    <style>
+      /* Your CSS styles can go here */
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        position: relative;
+      }
+
+      iframe {
+        width: 100%;
+        height: 100vh;
+        border: none;
+      }
+
+      .aykhan-text {
+        color: black;
+        text-decoration: none;
+      }
+
+      /* Modal Styles */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+      }
+
+      .modal-content {
+        background-color: white;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 600px;
+        position: relative;
+        text-align: center;
+        font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif ;
+      }
+
+      .close {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 10px;
+        cursor: pointer;
+      }
+
+      .link{
+        color: blue;
+      }
+
+      .task-container {
+        position: fixed;
+        top: 52px;
+        right: 20px;
+        font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+        border-radius: 30px;
+        border: 2px solid whitesmoke;
+        cursor: pointer;
+        text-decoration: none;
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        padding: 0px;
+        border: 2px solid #1f1f1f;
+        padding-left: 15px;
+        font-weight: bold;
+      }
+
+      .aykhan-text {
+        color: black;
+        text-decoration: none;
+      }
+
+      .task-link {
+        padding: 10px 20px;
+        margin-right: -1px;
+        background-color: #1f1f1f;
+        text-decoration: none;
+        color: whitesmoke;
+        border-radius: 30px;
+        margin-left: 10px;
+        -bottom: 10px;
+      }
+
+      @media only screen and (max-width: 600px){
+        .task-container {
+            display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- The modal container -->
+    <div id="myModal" class="modal">
+      <!-- Modal content -->
+      <div class="modal-content">
+        <span class="close" id="closeModal">&times;</span>
+        <h1>Cookie Issue Warning</h1>
+        <p>
+          There is an issue with cookies when loading this content in
+          an iframe from a different domain.
+        </p>
+        <p>
+          Cookies are blocked in this iframe due to browser security
+          policies.
+        </p>
+        <p>
+          As a result, some features may not work as expected.
+        </p>
+        <p>
+          To resolve this issue, consider accessing the content
+          directly at:
+        </p>
+        <a
+          class="link"
+          href="https://drongo-j.github.io/ReactExamProject/"
+          target="_blank"
+        >
+          https://drongo-j.github.io/ReactExamProject/
+        </a>
+      </div>
+    </div>
+
+    <!-- The iframe container -->
+    <iframe
+      src="https://drongo-j.github.io/ReactExamProject/"
+      title="Custom Website"
+      sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+    ></iframe>
+    <div class="task-container">
+      <a class="aykhan-text" href="https://aykhan.net">aykhan.net</a>
+      <a class="task-link" href="React - Task.zip" download>Download Task</a>
+    </div>
+  </div>
+    <script>
+      // Get the modal element
+      const modal = document.getElementById("myModal");
+
+      // Get the close button
+      const closeModal = document.getElementById("closeModal");
+
+      // Show the modal when the page starts
+      window.addEventListener("load", () => {
+        modal.style.display = "block";
+      });
+
+      // Close the modal when the close button is clicked
+      closeModal.addEventListener("click", () => {
+        modal.style.display = "none";
+      });
+    </script>
+  </body>
+</html>

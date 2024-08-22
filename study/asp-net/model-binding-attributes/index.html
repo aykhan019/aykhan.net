@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />\
+    <link rel="icon" type="image/x-icon"
+    href="https://res.cloudinary.com/dbriqxpaa/image/upload/v1680096853/Logo/logo-xl-ico_qzbf7d.ico" />
+    <title>Model Binding Attributes</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Model Binding Attributes in ASP.NET Web API</h1>
+
+      <div class="attribute-info">
+        <h2>[FromBody]</h2>
+        <p>
+          The <strong>[FromBody]</strong> attribute is used to bind data from
+          the request body in a POST or PUT request. It is typically used for
+          complex types such as classes or custom models. The data should be
+          sent in the request body with a Content-Type header of
+          <strong>application/json</strong>.
+        </p>
+        <pre><code class="highlight">@{
+                // C# code block
+                // POST /api/mycontroller
+                [HttpPost]
+                public IActionResult MyAction([FromBody] MyModel model)
+                {
+                    // The 'model' parameter will be bound from the request body.
+                    return Ok();
+                }
+            }</code></pre>
+      </div>
+
+      <div class="attribute-info">
+        <h2>[FromQuery]</h2>
+        <p>
+          The <strong>[FromQuery]</strong> attribute is used to bind data from
+          query parameters in the URL. It is useful for simple data types like
+          integers, strings, or enums that are typically passed in the URL.
+        </p>
+        <pre><code class="highlight">@{
+                // C# code block
+                // GET /api/mycontroller?param1=value1&param2=value2
+                [HttpGet]
+                public IActionResult MyAction([FromQuery] string param1, [FromQuery] int param2)
+                {
+                    // param1 will be bound to "value1", and param2 will be bound to 2.
+                    return Ok();
+                }
+            }</code></pre>
+      </div>
+
+      <div class="attribute-info">
+        <h2>[FromRoute]</h2>
+        <p>
+          The <strong>[FromRoute]</strong> attribute is used to bind data from
+          route parameters in the URL. Route parameters are defined in the route
+          template and extracted from the URL during routing.
+        </p>
+        <pre><code class="highlight">@{
+                // C# code block
+                // GET /api/mycontroller/123
+                [HttpGet("{id}")]
+                public IActionResult GetItem([FromRoute] int id)
+                {
+                    // id will be bound to 123.
+                    return Ok();
+                }
+            }</code></pre>
+      </div>
+
+      <div class="attribute-info">
+        <h2>[FromHeader]</h2>
+        <p>
+          The <strong>[FromHeader]</strong> attribute is used to bind data from
+          HTTP headers.
+        </p>
+        <pre><code class="highlight">@{
+                // C# code block
+                [HttpGet]
+                public IActionResult MyAction([FromHeader] string authorization)
+                {
+                    // Binds the value of the "Authorization" header to the 'authorization' parameter.
+                    return Ok();
+                }
+            }</code></pre>
+      </div>
+
+      <div class="attribute-info">
+        <h2>[FromForm]</h2>
+        <p>
+          The <strong>[FromForm]</strong> attribute is used to bind data from
+          form data submitted through an HTML form or
+          <strong>multipart/form-data</strong> request.
+        </p>
+        <pre><code class="highlight">@{
+                // C# code block
+                // POST /api/mycontroller
+                [HttpPost]
+                public IActionResult MyAction([FromForm] MyFormData data)
+                {
+                    // Binds data from the HTML form to the 'data' parameter.
+                    return Ok();
+                }
+            }</code></pre>
+      </div>
+
+      <div class="attribute-info">
+        <h2>[FromServices]</h2>
+        <p>
+          The <strong>[FromServices]</strong> attribute is used to bind data
+          from services registered in the dependency injection container.
+        </p>
+        <pre><code class="highlight">@{
+                // C# code block
+                public class MyController : ControllerBase
+                {
+                    private readonly IMyService _myService;
+
+                    public MyController([FromServices] IMyService myService)
+                    {
+                        _myService = myService;
+                    }
+
+                    // Use the _myService instance in your action methods.
+                }
+            }</code></pre>
+      </div>
+
+      <div class="attribute-info">
+        <h2>[ModelBinder]</h2>
+        <p>
+          The <strong>[ModelBinder]</strong> attribute is used to apply custom
+          model binding logic to a parameter. You can create a custom model
+          binder by implementing the <strong>IModelBinder</strong> interface.
+        </p>
+        <pre><code class="highlight">@{
+                // C# code block
+                [HttpGet]
+                public IActionResult MyAction([ModelBinder(typeof(CustomModelBinder))] CustomModel model)
+                {
+                    // Custom model binding logic is applied to the 'model' parameter.
+                    return Ok();
+                }
+            }</code></pre>
+      </div>
+    </div>
+  </body>
+</html>

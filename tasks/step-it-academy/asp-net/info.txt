@@ -1,0 +1,27 @@
+ASP.NET - Task 1 - https://github.com/Drongo-J/ASP.NET-RestaruantYummy
+ASP.NET - Task 2 - https://github.com/Drongo-J/ASP.NET-Users
+ASP.NET - Task 3 - https://github.com/Drongo-J/ASP.NET-Products.git
+ASP.NET - Task 4 - CRUD Emeliyyatlari tamamlamaq - https://github.com/Elvin1999/AspLesson4_3212.git
+ASP.NET - Task 5 - No Task Assigned
+ASP.NET - Task 6 - AZ Filter - https://github.com/Elvin1999/ECommerce3212.git
+ASP.NET - Task 7 - https://drive.google.com/drive/folders/1E2oa99EvqPSY7OHWtUIfDM1DfwPjJyGt -
+ASP.NET - Task 8 - Watch videos on YouTube about ASP.NET Core MVC Role Management System.
+ASP.NET - Task 9 - Update Product - https://github.com/Elvin1999/ECommerce3212.git
+ASP.NET - Task 10 - https://docs.google.com/document/d/1IA3aUm_cOq-Zc5pL8g3FWNK8IzZU_G9p9cArEneBbww/edit - not in MyStat
+ASP.NET - Task 11 - https://docs.google.com/document/d/11LTBW0TlRwgbXPQjRXfnDx5EPBMj_kSszAuJ6qNLVYc/edit - done
+ASP.NET - Task 12 - https://github.com/Elvin1999/WebApiDemo3212-CustomMiddleware - token
+ASP.NET - Task 13 - No Task Assigned
+ASP.NET - Task 14 - https://docs.google.com/document/d/1MP-sYzS6rVM_WAU5F50ZeIRwjV1KvtutxZ0jJEFJC4Q/edit
+ASP.NET - Task 15 - No Task Assigned
+ASP.NET - Task 16 - No Task Assigned
+ASP.NET - Task 17 - https://drive.google.com/drive/folders/1AOzjHzLelGjHqXmGA5WnRpiYp8awi5va
+ASP.NET - Task 18 - No Task Assigned
+ASP.NET - Task 19 - No Task Assigned
+ASP.NET - Task 20 - No Task Assigned
+ASP.NET - Task 21 - https://github.com/Drongo-J/Zust
+ASP.NET - Task 22 - https://github.com/Drongo-J/Zust
+ASP.NET - Task 23 - https://github.com/Drongo-J/Zust
+ASP.NET - Task 24 - No Task Assigned
+ASP.NET - Task 25 - https://github.com/Drongo-J/Zust
+ASP.NET - Task 26 - https://github.com/Drongo-J/Zust
+ASP.NET - Task 27 - https://github.com/Drongo-J/Zust
