@@ -333,7 +333,7 @@ section .title::after {
 }
 
 .bright-theme #services {
-    background: var(--thid-color);
+    background: var(--third-color);
     color: var(--seventh-color);
 }
 
@@ -360,8 +360,8 @@ section .title::after {
 
 .services,
 .teams {
-    color: var(--third-color);
-    background: var(--second-color);
+    color: var(--second-color);
+    background: var(--third-color);
 }
 
 .bright-theme .services .title::before {
@@ -370,7 +370,7 @@ section .title::after {
 
 .services .title::before {
     /* CHANGES LINE */
-    background: var(--third-color);
+    background: var(--second-color);
 }
 
 .bright-theme .services .title::after {
@@ -379,8 +379,8 @@ section .title::after {
 
 .services .title::after {
     /* changes what i code bgc only */
-    background-color: var(--second-color);
-    content: "what i code";
+    background-color: var(--third-color);
+    content: "what i do";
 }
 
 .bright-theme .services .title{
@@ -398,6 +398,7 @@ section .title::after {
     cursor: pointer;
     height: 320px;
     transition: all 0.3s ease;
+    border: 3px solid var(--second-color);
 }
 
 
