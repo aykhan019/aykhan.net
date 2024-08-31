@@ -151,6 +151,9 @@
                     <li itemprop="name">
                         <a href="#achievements" itemprop="url" class="no-smoothState no-single-work">My Achievements</a>
                     </li>
+                    <li itemprop="name">
+                        <a href="#useful-links" itemprop="url" class="no-smoothState no-single-work">Discover More</a>
+                    </li>
                     <li class="in-single-work">
                         <a href="/" data-destination="home" rel="nofollow">
                             <span aria-label="Back" class="nav-link-icon">
@@ -185,17 +188,16 @@
             <!-- Mobile View Links -->
             <ul class="mobile-nav-links">
                 <li>
-                    <a href="/" data-destination="home">Home</a>
+                    <a href="#services" itemprop="url" class="no-smoothState no-single-work">My Journey</a>
+
                 </li>
-                <!-- <li>
-                    <a href="#" data-scroll="" class="no-smoothState no-single-work">About Me</a>
-                </li> -->
-                <li>
-                    <a href="#" data-scroll="" class="no-smoothState no-single-work">My Journey</a>
+                <li itemprop="name">
+                    <a href="#achievements" itemprop="url" class="no-smoothState no-single-work">My Achievements</a>
                 </li>
-                <li>
-                    <a href="#" class="no-smoothState open-contact">Contact Me</a>
+                <li itemprop="name">
+                    <a href="#useful-links" itemprop="url" class="no-smoothState no-single-work">Discover More</a>
                 </li>
+               
             </ul>
 
             <!-- Social Links in Mobile -->
@@ -603,13 +605,8 @@
                 </div>
             </div>
 
-            <!-- About Section Start -->
-            <section id="about-me">
-
-            </section>
-
             <!-- My Coding Journey Section Start -->
-            <section class="services" id="services">
+            <section class="services main-item" id="services">
                 <h2 class="title">My Programming & AI Journey</h2>
                 <div class="services-container">
                     <div class="serv-content">
@@ -650,8 +647,9 @@
                 </div>
             </section>
 
+         
             <!-- My Achievements Section Start -->
-            <section class="services" style="padding-top: 0px !important;" id="achievements">
+            <section class="services main-item" id="achievements">
                 <div class="max-width">
                     <h2 class="title">My Achievements</h2>
                     <div class="services-container">
@@ -661,8 +659,7 @@
                                     <img src="https://media.aykhan.net/assets/icons/step-it-academy-blue.png"
                                         alt="Certificates">
                                     <div class="text">Certificates</div>
-                                    <p>Explore my certificates from completed courses and training programs,
-                                        demonstrating my commitment to continuous learning and professional growth.</p>
+                                    <p>Explore my certificates from courses and training programs, reflecting my dedication to continuous learning.</p>
                                 </div>
                             </a>
                             <a href="https://aykhan.net/achievements/badges" class="card">
@@ -677,6 +674,34 @@
                     </div>
                 </div>
             </section>
+
+               <!-- Useful Links -->
+               <section class="services main-item" id="useful-links">
+                <div class="max-width">
+                    <h2 class="title">Discover More</h2>
+                    <div class="services-container">
+                        <div class="serv-content">
+                            <a href="https://aykhan.net/achievements/certificates" class="card">
+                                <div class="box">
+                                    <img src="https://media.aykhan.net/assets/icons/step-it-academy-blue.png"
+                                        alt="Certificates">
+                                    <div class="text">Certificates</div>
+                                    <p>Explore my certificates from courses and training programs, reflecting my dedication to continuous learning.</p>
+                                </div>
+                            </a>
+                            <a href="https://aykhan.net/achievements/badges" class="card">
+                                <div class="box">
+                                    <img src="https://media.aykhan.net/assets/icons/github.svg" alt="Badges">
+                                    <div class="text">Badges</div>
+                                    <p>Discover my earned badges and achievements from different platforms, reflecting
+                                        my skills and expertise.</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
         </main>
 
         <!-- Footer -->
@@ -739,8 +764,8 @@
                         </li>
                     </ul>
                 </div>
-                <div class="footer-copy">
-                    © <span id="current-year"></span> Aykhan Ahmadzada
+                <div class="footer-copy" style="margin-top: 31px;">
+                    © <span id="current-year"></span> <span style="font-size: 15px;"> Aykhan Ahmadzada</span>
                 </div>
 
                 <script>

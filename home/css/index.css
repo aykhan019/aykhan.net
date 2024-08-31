@@ -260,14 +260,70 @@ section .title::after {
     background: none;
 }
 
-/* about section styling */
-#about-me {
-    height: 100vh;
+#achievements{
     height: auto;
     padding: 0px;
     color: var(--seventh-color);
-    /* background-color: var(--second-color); */
+    background-color: var(--second-color);
+    padding-bottom: 100px;
 }
+
+#achievements .title::after{
+    color: var(--first-color) !important;
+    background-color: var(--second-color)  !important;
+    content: "what i achieved";
+}
+
+#achievements{
+    color: var(--third-color) !important;
+}
+
+#achievements .card{
+    border: 2px solid var(--seventh-color) !important;
+}
+/* about section styling */
+#achievements{
+    height: auto;
+    padding: 0px;
+    color: var(--seventh-color);
+    background-color: var(--second-color);
+    padding-bottom: 100px;
+}
+#achievements .title::before{
+    width: 220px;
+    background-color: var(--third-color) !important;
+}
+.bright-theme #achievements .title::before{
+    background-color: var(--second-color) !important;
+}
+
+.bright-theme #achievements .title::after{
+    background-color: var(--ninth-color) !important;
+}
+
+
+
+.bright-theme #achievements{
+    background-color: var(--ninth-color) !important;
+}
+
+.bright-theme #achievements .title{
+    color:var(--second-color) !important;
+    background-color: var(--ninth-color);
+}
+
+.bright-theme #achievements .card{
+    color:var(--second-color) !important;
+    background-color: var(--ninth-color);
+}
+#useful-links .title::before{
+    width: 250px;
+}
+
+#useful-links .title::after{
+    content: "extended resources";
+}
+
 
 /* .bright-theme #about-me {
     background: var(--third-color)
@@ -370,8 +426,9 @@ section .title::after {
 
 .services .title::before {
     /* CHANGES LINE */
-    background: var(--second-color);
+    /* background: var(--second-color); */
 }
+
 
 .bright-theme .services .title::after {
     background-color: var(--third-color);
@@ -405,6 +462,11 @@ section .title::after {
 .services .serv-content .card:hover{
     text-decoration: underline;
 }
+
+
+
+
+
 
 
 .bright-theme .services .serv-content .card {
@@ -460,6 +522,8 @@ section .title::after {
 .skills .title::after {
     content: "what i know";
 }
+
+
 
 .skills .skills-content .column {
     width: calc(50% - 30px);
@@ -626,6 +690,13 @@ section .title::after {
 
 .contact .title::after {
     content: "get in touch";
+}
+
+
+
+
+.main-item{
+    padding: 60px 10px 80px 10px !important;
 }
 
 .contact .contact-content .column {

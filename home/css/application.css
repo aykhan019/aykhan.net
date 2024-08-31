@@ -3450,8 +3450,12 @@ textarea {
 }
 
 .bright-theme .footer {
-    background-color: var(--third-color);
+    background-color: var(--ninth-color);
     color: var(--seventh-color);
+}
+
+.bright-theme .footer-links li a:hover {
+    color: var(--first-color);
 }
 
 .bright-theme .footer-links a {
