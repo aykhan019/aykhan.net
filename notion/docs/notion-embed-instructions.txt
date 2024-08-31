@@ -8,7 +8,8 @@
    - Use Notion’s export feature to export the page as HTML.
 
 4. **Save HTML File:**
-   - Save the exported HTML file directly to the `media.aykhan.net/notion-pages` folder.
+   - Update HTML File if needed
+   - Save the exported HTML file to the `media.aykhan.net/notion-pages` folder.
    - Name the file appropriately based on the content (e.g., `module-1.html`).
 
 5. **Embed in Website:**
