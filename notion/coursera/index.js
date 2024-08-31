@@ -12,7 +12,7 @@ const ibm_data_science = new PageLinkItem(
     2, 
     "IBM Data Science", 
     "Notes from IBM Data Science courses on Coursera.", 
-    "https://media.aykhan.net/thumbnails/notion/coursera/ibm/ibm-v2.png", 
+    "https://media.aykhan.net/thumbnails/notion/coursera/ibm/ibm-v1.png", 
     "https://aykhan.net/notion/coursera/ibm-data-science"
 );
 
