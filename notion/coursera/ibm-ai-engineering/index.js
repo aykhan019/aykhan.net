@@ -12,7 +12,7 @@ const courses = [
         2, 
         "Introduction to Deep Learning & Neural Networks with Keras", 
         "Notes from the Introduction to Deep Learning & Neural Networks with Keras course on Coursera.", 
-        "https://media.aykhan.net/thumbnails/notion/coursera/ibm/ibm-ai-engineering/introduction-to-deep-learning-with-keras.png", 
+        "https://media.aykhan.net/thumbnails/notion/coursera/ibm/ibm-ai-engineering/introduction-to-deep-learning-and-neural-networks-with-keras.png", 
         "https://aykhan.net/notion/coursera/ibm-ai-engineering/introduction-to-deep-learning-and-neural-networks-with-keras"
     ),
     new PageLinkItem(

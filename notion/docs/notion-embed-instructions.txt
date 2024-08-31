@@ -1,0 +1,54 @@
+1. **Publish Notion Page:**
+   - Publish your Notion page to make it publicly accessible.
+
+2. **Get URL:**
+   - Copy the URL of the published Notion page.
+
+3. **Export HTML:**
+   - Use Notion’s export feature to export the page as HTML.
+
+4. **Save HTML File:**
+   - Save the exported HTML file directly to the `media.aykhan.net/notion-pages` folder.
+   - Name the file appropriately based on the content (e.g., `module-1.html`).
+
+5. **Embed in Website:**
+   - Embed the static HTML file in the desired location on your website using the URL from `media.aykhan.net/notion-pages`.
+   - Use the following code template for embedding:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Title</title>
+    <meta name="description" content="Your Description">
+    <link rel="icon" type="image/x-icon"
+    href="https://res.cloudinary.com/dbriqxpaa/image/upload/v1680096853/Logo/logo-xl-ico_qzbf7d.ico" />
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        iframe {
+            width: 100%;
+            height: 100vh;
+            border: 0;
+            overflow: auto;
+        }
+    </style>
+</head>
+<body>
+    <iframe src="/path/to/source"></iframe>
+</body>
+</html>
+```
+   - Update the `src` attribute in the `<iframe>` tag with the path to your saved HTML file (e.g., `/notion-pages/module-1.html`).
+
+**Note:**
+- Ensure that the published Notion page is locked to prevent unauthorized changes.
+- Update the static HTML files in `media.aykhan.net/notion-pages` if there are any changes to the original Notion pages.
+- In the future, page updates may be automated using Notion API and GitHub Actions.
