@@ -324,6 +324,9 @@ section .title::after {
     content: "extended resources";
 }
 
+.achievements-card-icon{
+    transform: scale(1.2); /* Increase size by 20% */
+}
 
 /* .bright-theme #about-me {
     background: var(--third-color)
