@@ -19,32 +19,82 @@
 ```html
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Title</title>
-    <meta name="description" content="Your Description">
+    <meta name="description"
+        content="Your Title">
     <link rel="icon" type="image/x-icon"
-    href="https://res.cloudinary.com/dbriqxpaa/image/upload/v1680096853/Logo/logo-xl-ico_qzbf7d.ico" />
+        href="https://res.cloudinary.com/dbriqxpaa/image/upload/v1680096853/Logo/logo-xl-ico_qzbf7d.ico" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <link rel="stylesheet" href="/home/css/application.css">
+    <link rel="stylesheet" href="/home/css/variables.css"> 
     <style>
-        html, body {
+        html,
+        body {
             margin: 0;
             padding: 0;
             height: 100%;
             overflow: hidden;
         }
-        
+
+        .content {
+            height: 100vh;
+            overflow: hidden;
+            width: 100%;
+            position: relative;
+        }
+
+        .section-text-mask {
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            margin: 0;
+        }
+
+        .section-title,
+        .section-subtitle {
+            padding: 15px 5px;
+            margin: 0;
+        }
+
+        .iframe-container {
+            height: 92vh;
+            overflow: hidden;
+            padding: 15px;
+        }
+
         iframe {
             width: 100%;
-            height: 100vh;
+            height: 100%;
             border: 0;
-            overflow: auto;
+            margin-top: -50px;
         }
     </style>
 </head>
+
 <body>
-    <iframe src="/path/to/source"></iframe>
+    <section class="case-studies" itemscope itemprop="mainContentOfPage" class="case-studies-section"
+        style="width:100%;padding: 2% 0%;">
+        <div class="section-mask"></div>
+        <div class="content">
+            <div class="section-text-mask">
+                <h4 class="h5 section-subtitle">Machine Learning with Python</h4>
+            </div>
+            <div class="section-text-mask">
+                <h2 class="h3 section-title">Module 1: Introduction to Machine Learning</h2>
+            </div>
+            <div class="iframe-container">
+
+                <iframe id="iframeContent"
+                    src="path/to/source"></iframe>
+            </div>
+        </div>
+    </section>
 </body>
+
 </html>
 ```
    - Update the `src` attribute in the `<iframe>` tag with the path to your saved HTML file (e.g., `/notion-pages/module-1.html`).
