@@ -1,3 +1,5 @@
+---
+
 1. **Publish Notion Page:**
    - Publish your Notion page to make it publicly accessible.
 
@@ -97,9 +99,29 @@
 
 </html>
 ```
+
    - Update the `src` attribute in the `<iframe>` tag with the path to your saved HTML file (e.g., `/notion-pages/module-1.html`).
 
 **Note:**
 - Ensure that the published Notion page is locked to prevent unauthorized changes.
 - Update the static HTML files in `media.aykhan.net/notion-pages` if there are any changes to the original Notion pages.
 - In the future, page updates may be automated using Notion API and GitHub Actions.
+- Add the following CSS to the downloaded HTML page to customize the scrollbar for Edge:
+
+```css
+/* For Edge (based on WebKit) */
+::-webkit-scrollbar {
+    width: 7px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+}
+```
+
+---
