@@ -33,9 +33,11 @@
     </section>
 </body>
 
-<script src="../../../home/js/classes.js"></script>
-<script src="../../../home/js/functions.js"></script>
+<script src="../../../home/js/source.js"></script>
 <script src="../../../home/js/application.js"></script>
-<script src="index.js"></script>
+<script>
+    var dataSource = 'https://data.aykhan.net/data/metadata/tasks/step-it-academy/asp-net/metadata.json'
+    new PageLinkDataManager(dataSource).addPageLinkItems()
+</script>
 
 </html>

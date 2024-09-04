@@ -20,7 +20,7 @@
         <div class="section-mask"></div>
         <div class="content">
             <div class="section-text-mask">
-                <h4 class="h5 section-subtitle">IBM Data Science Courses</h4>
+                <h4 class="h5 section-subtitle">IBM Data Analysis Courses</h4>
             </div>
             <div class="section-text-mask">
                 <h2 class="h3 section-title">Choose a Course</h2>
@@ -33,9 +33,11 @@
     </section>
 </body>
 
-<script src="../../../home/js/classes.js"></script>
-<script src="../../../home/js/functions.js"></script>
+<script src="../../../home/js/source.js"></script>
 <script src="../../../home/js/application.js"></script>
-<script src="index.js"></script>
+<script>
+    var dataSource = 'https://data.aykhan.net/data/metadata/notion/coursera/ibm-data-analysis/metadata.json'
+    new PageLinkDataManager(dataSource).addPageLinkItems()
+</script>
 
 </html>
