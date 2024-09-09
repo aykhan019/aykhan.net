@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL | Task 1 | aykhan.net</title>
+    <meta name="description"
+        content="SQL | Task 1 | aykhan.net">
+    <link rel="icon" type="image/x-icon"
+        href="https://res.cloudinary.com/dbriqxpaa/image/upload/v1680096853/Logo/logo-xl-ico_qzbf7d.ico" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <link rel="stylesheet" href="../index.css">
+    <link rel="stylesheet" href="../highlight.css">
+    <link rel="stylesheet" href="../../../../home/css/application.css">
+    <link rel="stylesheet" href="../../../../home/css/variables.css">
+
+    <script src="../highlight.js"></script>
+    <script>hljs.highlightAll();</script>
+</head>
+
+<body>
+    <section class="case-studies" itemscope itemprop="mainContentOfPage" class="case-studies-section"
+        style="width:100%;padding: 2% 0%;">
+        <div class="section-mask"></div>
+        <div class="content">
+            <div class="section-text-mask">
+                <h4 class="h5 section-subtitle">SQL | Step IT Academy</h4>
+            </div>
+            <div class="section-text-mask">
+                <h2 class="h3 section-title">Task 1</h2>
+            </div>
+            <div class="container">
+                <pre><code class="sql">
+CREATE DATABASE [AcademyDB]
+
+USE AcademyDB
+
+CREATE TABLE Groups
+(
+    [Id] INT PRIMARY KEY IDENTITY(1, 1) NOT NULL,
+    [Name] NVARCHAR(10) NOT NULL,
+    [Rating] INT NOT NULL,
+    [Year] INT NOT NULL,
+    CONSTRAINT UQ_Groups_Name
+        UNIQUE ([Name]),
+    CONSTRAINT CK_Groups_Name CHECK ([Name] != ''),
+    CONSTRAINT CK_Groups_Rating CHECK ([Rating] >= 0
+                                        AND [Rating] <= 5
+                                        ),
+    CONSTRAINT CK_Groups_Year CHECK ([Year] >= 1
+                                        AND [Year] <= 5
+                                    )
+)
+
+CREATE TABLE Chairs
+(
+    [Id] INT PRIMARY KEY IDENTITY(1, 1) NOT NULL,
+    [Financing] MONEY NOT NULL
+        DEFAULT 0,
+    [Name] nvarchar(100) NOT NULL,
+    CONSTRAINT UQ_Chairs_Name
+        UNIQUE ([Name]),
+    CONSTRAINT CK_Chairs_Financing CHECK ([Financing] >= 0),
+    CONSTRAINT CK_Chairs_Name CHECK ([Name] != '')
+)
+
+CREATE TABLE Faculties
+(
+    [Id] INT PRIMARY KEY IDENTITY(1, 1) NOT NULL,
+    [Name] nvarchar(100) NOT NULL,
+    CONSTRAINT CK_Faculties_Name CHECK ([Name] != ''),
+    CONSTRAINT UQ_Faculties_Name
+        UNIQUE ([Name])
+)
+
+CREATE TABLE Teachers
+(
+    [Id] INT PRIMARY KEY IDENTITY(1, 1) NOT NULL,
+    [EmploymentDate] DATE NOT NULL,
+    [Name] NVARCHAR(Max) NOT NULL,
+    [Premium] MONEY NOT NULL
+        DEFAULT 0,
+    [Salary] MONEY NOT NULL,
+    [Surname] NVARCHAR(MAX) NOT NULL,
+    CONSTRAINT CK_Teachers_EmploymentDate CHECK (EmploymentDate > '1990-01-01'),
+    CONSTRAINT CK_Teachers_Name CHECK ([Name] != ''),
+    CONSTRAINT CK_Teachers_Premium CHECK ([Premium] >= 0),
+    CONSTRAINT CK_Teachers_Salary CHECK ([Salary] > 0),
+    CONSTRAINT CK_Teachers_Surname CHECK ([Surname] != ''),
+)
+                </code></pre>
+            </div>
+        </div>
+    </section>
+
+</body>
+
+</html>
