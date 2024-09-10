@@ -317,11 +317,11 @@ section .title::after {
     background-color: var(--ninth-color);
 }
 #useful-links .title::before{
-    width: 250px;
+    width: 200px;
 }
 
 #useful-links .title::after{
-    content: "extended resources";
+    content: "dive deeper";
 }
 
 .achievements-card-icon{
