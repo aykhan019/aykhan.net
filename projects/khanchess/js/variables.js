@@ -18,12 +18,10 @@ const numSquaresToEdge = [];
 const directionOffsets = [8, -8, -1, 1, 7, -7, 9, -9];
 const directionsForKnight = [-17, -15, -10, -6, 6, 10, 15, 17];
 
-let selectedPieceStyleSource = allPieceStyles[9];
+let selectedPieceStyleSource = allPieceStyles[0];
 
 let moveAudio = new Audio("Assets/Sounds/Move.mp3");
 let captureAudio = new Audio("Assets/Sounds/Capture.mp3");
-let endAudio = new Audio("Assets/Sounds/Victory.mp3");
-let drawAudio = new Audio("Assets/Sounds/Draw.mp3");
 
 let white_castleKS = false;
 let black_castleKS = false;
@@ -42,11 +40,11 @@ let oldSquareSelected = false;
 
 let previousSquareIdForPossibleMoves = -1;
 
-const engine_url_bestMove = "https://www.chessdb.cn/cdb.php?action=querybest&board=";
-const engine_url_moveSearch = "https://www.chessdb.cn/cdb.php?action=querysearch&board=";
+//const engine_url_bestMove = "https://www.chessdb.cn/cdb.php?action=querybest&board=";
+//const engine_url_moveSearch = "https://www.chessdb.cn/cdb.php?action=querysearch&board=";
 
 const chess = new Chess();
-    
+
 let coordinates = [
     "a1",
     "b1",

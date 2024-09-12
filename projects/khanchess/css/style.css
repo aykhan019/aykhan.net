@@ -8,6 +8,7 @@
 html,
 body {
     height: 100%;
+    background-color: #171513 !important;
 }
 
 main {
@@ -15,7 +16,17 @@ main {
     justify-content: center;
     align-items: center;
     background-color: #171513;
-    height: calc(100% - 78px);
+    padding: 4% 0;
+}
+
+footer {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    background-color: #262421;
+    color: whitesmoke;
+    padding: 20px;
+    padding-bottom: 4px;
+    text-align: center;
+    object-fit: center/cover;
 }
 
 .board {
@@ -61,6 +72,7 @@ main {
     display: flex;
     flex-direction: column;
     overflow-y: scroll;
+    width: auto;
 }
 
 /* Hide the scrollbar in #moves-played element */
@@ -214,10 +226,29 @@ nav {
     background-color: transparent;
 }
 
-@media only screen and (max-width:750px) {
-    .board{
-        width: 95%;
+#your-turn,
+#thinkingText {
+    font-size: 19px;
+    color: green;
+    display: none;
+    /* Initially hidden */
+    animation: fadeInOut 2s infinite;
+    margin-left: 35px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
+}
+
+#your-turn{
+    display: block;
+}
+
+@keyframes fadeInOut {
+
+    0%,
+    100% {
+        opacity: 0;
     }
 
-    
+    50% {
+        opacity: 1;
+    }
 }

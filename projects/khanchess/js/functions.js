@@ -398,8 +398,6 @@ function showBoardInConsole() {
         // aside.innerHTML += "<br/>"
         // console.log(rowStr); 
     }
-
-    // console.log('\n\n'); 
 }
 
 function changeViewAfterMove(oldSquare, element, itemBeingDragged) { // element can be a piece or a square
@@ -511,45 +509,69 @@ async function sendRequest(url) {
     return data;
 }
 
+// URL for Stockfish API
+const stockfishUrl = "https://stockfish.online/api/s/v2.php?fen=";
+
+// Async function to send a request to the Stockfish API
+async function sendRequest(url) {
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json(); // Parse JSON response
+}
+
+// Main function to choose the computer's move using Stockfish API
 async function chooseComputerMove() {
+    const thinkingText = document.getElementById("thinkingText");
+    thinkingText.style.display = "block"; // Show the thinking message
+
+    const yourTurn = document.getElementById("your-turn");
+    yourTurn.style.display = 'none';
     try {
-        // let myFen = getFen();
-        // console.log(myFen);
-        let url = engine_url_bestMove + board.fen;
+        let myFen = board.fen; // Get current board position in FEN
+        //console.log("Current FEN:", myFen);
+
+        // Build URL with FEN and depth (depth can be adjusted as needed)
+        let url = `${stockfishUrl}${encodeURIComponent(myFen)}&depth=12`;
+
+        // Send request to Stockfish API to get the best move
         let data = await sendRequest(url);
-        let arr = data.split(":");
-        // console.log("REQUESTED MOVE : " + arr[1]);
-        if (arr[0] != 'move') {
-            // Try other one
-            let url2 = engine_url_moveSearch + board.fen;
-            let data2 = await sendRequest(url2);
 
-            if (data2 != 'nobestmove\u0000') {
-                data = data2;
-            }
-            else {
-                throw new Error("API did not return valid result.");
-            }
+        // Check if the API response was successful and contains a valid best move
+        if (data.success && data.bestmove) {
+            const bestMoveStr = data.bestmove.split(" ")[1]; // Extract the best move (e.g., g8f6)
+
+            // The move will be in the form g8f6, so we split it into start and target squares
+            const startSquare = bestMoveStr.slice(0, 2);  // Start square (e.g., "g8")
+            const targetSquare = bestMoveStr.slice(2, 4); // Target square (e.g., "f6")
+            
+            // Convert board coordinates (e.g., "g8", "f6") to indices
+            let moveStart = coordinateToIndex(startSquare);
+            let moveTarget = coordinateToIndex(targetSquare);
+
+            move = new Move(moveStart, moveTarget)
+            //console.log(move)
+            // Return the best move as a Move object
+            return move;
+        } else {
+            throw new Error("API did not return a valid best move.");
         }
-
-        let moveSquares = arr[1];
-        const firstTwo = moveSquares.slice(0, 2); // startSquare
-        const lastTwo = moveSquares.slice(-3, -1); // targetSquare
-        let moveStart = coordinateToIndex(firstTwo);
-        let moveTarget = coordinateToIndex(lastTwo);
-        return new Move(moveStart, moveTarget);
     } catch (error) {
-        console.log(`Chess Engine Does Not Work. Moves Are Random. \nError : ${error}`)
+        console.log(`Error getting move from Stockfish API. Falling back to random move. \nError: ${error}`);
+        
+        // Fallback to a random move if the engine fails
+        moves = getNewMoves(); // Generate new possible moves for fallback
         const randomIndex = Math.floor(Math.random() * moves.length);
-        moves = getNewMoves(); // for computer
         return moves[randomIndex];
+    } finally{
+        thinkingText.style.display = "none"; // Hide the thinking message after the move is decided
+        yourTurn.style.display = 'block';
     }
 }
 
 async function playComputer() {
-    // let computerMove = await chooseComputerMove();
-    let moves = getNewMoves();
-    let computerMove = moves[Math.floor(Math.random() * moves.length)];
+    let computerMove = await chooseComputerMove();
     if (!computerMove) {
         return;
     }
@@ -592,27 +614,23 @@ function checkMate(newGeneratedMoves) {
             if (board.WhiteKingIsChecked) {
                 console.log("MATE | BLACK WON");
                 setTimeout(() => {
-                    endAudio.play();
                     alert("MATE | BLACK WON");
-                }, 100);
+                }, 3000);
             } else {
                 setTimeout(() => {
-                    drawAudio.play();
                     alert("DRAW");
-                }, 100);
+                }, 3000);
             }
         } else {
             if (board.BlackKingIsChecked) {
                 console.log("MATE | WHITE WON");
                 setTimeout(() => {
-                    endAudio.play();
                     alert("MATE | WHITE WON");
-                }, 100);
+                }, 3000);
             } else {
                 setTimeout(() => {
-                    drawAudio.play();
                     alert("DRAW");
-                }, 100);
+                }, 3000);
             }
         }
     }
@@ -624,64 +642,64 @@ function checkDraw() {
 
 let movesPlayed = document.getElementById("moves-played");
 function updatePlayedMoves() {
-    // if (board.MovesPlayed.length == 1) {
-    //     movesPlayed.innerHTML = stringEmpty;
-    // }
-    // let l = board.MovesPlayed.length;
-    // if (l === 0) return;
-    // let content;
+    if (board.MovesPlayed.length == 1) {
+        movesPlayed.innerHTML = stringEmpty;
+    }
+    let l = board.MovesPlayed.length;
+    if (l === 0) return;
+    let content;
 
-    // if (l % 2 === 0) {
-    //     no = l / 2;
-    //     let element = document.getElementById(`played-move-${no}`);
-    //     let blackMoveIndex = board.MovesPlayed[l - 1].targetSquare;
-    //     let c2 = coordinates[blackMoveIndex];
-    //     let whiteMoveIndex = board.MovesPlayed[l - 2].targetSquare;
-    //     let c1 = coordinates[whiteMoveIndex];
-    //     let w_piece = board.Squares[whiteMoveIndex];
-    //     let w_unicode;
-    //     if (w_piece.piece != Piece.Pawn) {
-    //         w_unicode = Piece.getUnicode(w_piece);
-    //     } else {
-    //         w_unicode = '';
-    //     }
-    //     let b_piece = board.Squares[blackMoveIndex];
-    //     let b_unicode;
-    //     if (b_piece.piece != Piece.Pawn) {
-    //         b_unicode = Piece.getUnicode(b_piece);
-    //     } else {
-    //         b_unicode = '';
-    //     }
-    //     element.innerHTML = `
-    //     <section id='played-move-${no}' class="played-move">
-    //         <section id="no">${no}</section>
-    //         <section id="white-move">${w_unicode}${c1}</section>
-    //         <section id="black-move">${b_unicode}${c2}</section>
-    //     </section>
-    //     `;
-    // }
-    // else {
-    //     let whiteMoveIndex = board.MovesPlayed[l - 1].targetSquare;
-    //     let c1 = coordinates[whiteMoveIndex];
-    //     let no = Math.floor(l / 2) + 1;
-    //     let piece = board.Squares[whiteMoveIndex];
-    //     let unicode;
-    //     if (piece.piece != Piece.Pawn) {
-    //         unicode = Piece.getUnicode(piece);
-    //     } else {
-    //         unicode = '';
-    //     }
-    //     content = `
-    //     <section id='played-move-${no}' class="played-move">
-    //         <section id="no">${no}</section>
-    //         <section id="white-move">${unicode}${c1}</section>
-    //         <section id="black-move"></section>
-    //     </section>
-    //     `;
-    //     movesPlayed.innerHTML += content;
-    // }
+    if (l % 2 === 0) {
+        no = l / 2;
+        let element = document.getElementById(`played-move-${no}`);
+        let blackMoveIndex = board.MovesPlayed[l - 1].targetSquare;
+        let c2 = coordinates[blackMoveIndex];
+        let whiteMoveIndex = board.MovesPlayed[l - 2].targetSquare;
+        let c1 = coordinates[whiteMoveIndex];
+        let w_piece = board.Squares[whiteMoveIndex];
+        let w_unicode;
+        if (w_piece.piece != Piece.Pawn) {
+            w_unicode = Piece.getUnicode(w_piece);
+        } else {
+            w_unicode = '';
+        }
+        let b_piece = board.Squares[blackMoveIndex];
+        let b_unicode;
+        if (b_piece.piece != Piece.Pawn) {
+            b_unicode = Piece.getUnicode(b_piece);
+        } else {
+            b_unicode = '';
+        }
+        element.innerHTML = `
+        <section id='played-move-${no}' class="played-move">
+            <section id="no">${no}</section>
+            <section id="white-move">${w_unicode}${c1}</section>
+            <section id="black-move">${b_unicode}${c2}</section>
+        </section>
+        `;
+    }
+    else {
+        let whiteMoveIndex = board.MovesPlayed[l - 1].targetSquare;
+        let c1 = coordinates[whiteMoveIndex];
+        let no = Math.floor(l / 2) + 1;
+        let piece = board.Squares[whiteMoveIndex];
+        let unicode;
+        if (piece.piece != Piece.Pawn) {
+            unicode = Piece.getUnicode(piece);
+        } else {
+            unicode = '';
+        }
+        content = `
+        <section id='played-move-${no}' class="played-move">
+            <section id="no">${no}</section>
+            <section id="white-move">${unicode}${c1}</section>
+            <section id="black-move"></section>
+        </section>
+        `;
+        movesPlayed.innerHTML += content;
+    }
 
-    // movesPlayed.scrollTo(0, movesPlayed.scrollHeight);
+    movesPlayed.scrollTo(0, movesPlayed.scrollHeight);
 }
 
 const dropdownDefaulthtml = `
@@ -703,6 +721,7 @@ pieceSetsItem.addEventListener('click', function (event) {
     event.stopPropagation();
     showPieceSets();
 });
+
 
 function showPieceSets() {
     dropdown.innerHTML = stringEmpty;
