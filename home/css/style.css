@@ -168,7 +168,7 @@ body.loaded {
     }
 
     100% {
-        color: var(--third-color);
+        color: white;
     }
 }
 
@@ -178,12 +178,12 @@ body.loaded {
     }
 
     100% {
-        color: var(--third-color);
+        color: white;
     }
 }
 
 .blinkWarning {
     -webkit-animation: blinkWarning 1s linear infinite;
     -moz-animation: blinkWarning 1s linear infinite;
-    animation: blinkWarning 1s linear infinite;
+    animation: 1s linear infinite;
 }

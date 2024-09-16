@@ -1,54 +1,53 @@
-window.scrollTo(0, 0);
+// window.scrollTo(0, 0);
 
-var isJavid = false;
+// var isJavid = false;
 
-function calculateAge() {
+// function calculateAge() {
+//   var birthday = new Date("2006-02-23");
+//   if (isJavid) {
+//     birthday = new Date("2008-04-27");
+//   }
+//   var today = new Date();
+//   var age = today.getFullYear() - birthday.getFullYear();
+//   var monthDiff = today.getMonth() - birthday.getMonth();
+//   if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthday.getDate())) {
+//     age--;
+//   }
+//   return age;
+// }
 
-  var birthday = new Date("2006-02-23");
-  if (isJavid) {
-    birthday = new Date("2008-04-27");
-  }
-  var today = new Date();
-  var age = today.getFullYear() - birthday.getFullYear();
-  var monthDiff = today.getMonth() - birthday.getMonth();
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthday.getDate())) {
-    age--;
-  }
-  return age;
-}
+// window.onload = function () {
+//   var ageElement = document.getElementById("age");
+//   var age = calculateAge();
+//   ageElement.innerText = age;
 
-window.onload = function () {
-  var ageElement = document.getElementById("age");
-  var age = calculateAge();
-  ageElement.innerText = age;
+//   var paragraph = document.getElementById("about-me-paragraph");
+//   var image = document.getElementById("about-me-image");
 
-  var paragraph = document.getElementById("about-me-paragraph");
-  var image = document.getElementById("about-me-image");
+//   function setImageHeight() {
+//     if (window.innerWidth <= 948) {
+//       image.style.height = "auto";
+//       return;
+//     }
+//     else {
 
-  function setImageHeight() {
-    if (window.innerWidth <= 948) {
-      image.style.height = "auto";
-      return;
-    }
-    else {
+//       var paragraphHeight = paragraph.offsetHeight;
 
-      var paragraphHeight = paragraph.offsetHeight;
+//       if (paragraphHeight === 602) {
+//         paragraphHeight = 655;
+//       }
 
-      if (paragraphHeight === 602) {
-        paragraphHeight = 655;
-      }
+//       image.style.height = paragraphHeight + 5 + "px";
+//     }
+//   }
 
-      image.style.height = paragraphHeight + 5 + "px";
-    }
-  }
+//   function handleResize() {
+//     setImageHeight();
+//   }
 
-  function handleResize() {
-    setImageHeight();
-  }
-
-  setImageHeight();
-  window.addEventListener('resize', handleResize);
-};
+//   setImageHeight();
+//   window.addEventListener('resize', handleResize);
+// };
 
 
 // ========== 1 ==========

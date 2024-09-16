@@ -316,11 +316,11 @@ section .title::after {
     color:var(--second-color) !important;
     background-color: var(--ninth-color);
 }
-#useful-links .title::before{
+#discover-more .title::before{
     width: 200px;
 }
 
-#useful-links .title::after{
+#discover-more .title::after{
     content: "dive deeper";
 }
 
@@ -387,11 +387,11 @@ section .title::after {
 }
 
 /* services section styling */
-#services {
+#journey-overview {
     text-align: center;
 }
 
-.bright-theme #services {
+.bright-theme #journey-overview {
     background: var(--third-color);
     color: var(--seventh-color);
 }
