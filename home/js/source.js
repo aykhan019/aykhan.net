@@ -17,6 +17,7 @@ class PageLinkDataManager {
     async loadData() {
         try {
             const response = await fetch(this.jsonFilePath);
+            console.log(response)
             this.data = await response.json();
         } catch (error) {
             console.error('Error loading JSON data:', error);
