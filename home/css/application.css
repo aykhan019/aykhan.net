@@ -5596,3 +5596,13 @@ main {
     }
 }
 
+.section-text-mask-notion {
+border-bottom: 2px solid  #4A4A4A;  
+transition: border-bottom 0.3s ease;
+border-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='10'><path d='M0,5 C20,0 40,10 60,5 C80,0 100,10 120,5' stroke='%234A4A4A' stroke-width='2' fill='none'/></svg>") 30 round;
+}
+
+.iframe-container{
+padding-top: 0px !important;
+height: 95vh !important;
+}
