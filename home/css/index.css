@@ -39,7 +39,7 @@ section {
 }
 
 .max-width {
-    max-width: 1300px;
+    /* max-width: 1300px; */
     padding: 0 80px;
     margin: auto;
 }
@@ -451,6 +451,7 @@ section .title::after {
     /* width: calc(33% - 20px); */
     width: calc(23% - 10px);
     min-width: 320px;
+    max-width: 480px;
     background: var(--third-color);
     text-align: center;
     border-radius: 6px;

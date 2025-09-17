@@ -2,6 +2,27 @@
 <html lang="en" class="js">
 
 <head itemscope="" itemtype="http://schema.org/WebSite">
+    <script>
+        /*
+        * First-paint theme setter (runs before CSS loads)
+        * - Uses local time to choose one of 4 themes
+        * - Respects localStorage 'themeOverride' if set
+        *   (valid: 'night'|'morning'|'afternoon'|'evening')
+        */
+        (function () {
+            function slot(h) {
+                // 00–05 = night, 06–11 = morning, 12–17 = afternoon, 18–23 = evening
+                if (h < 6) return 'night';
+                if (h < 12) return 'morning';
+                if (h < 18) return 'afternoon';
+                return 'evening';
+            }
+            var override = localStorage.getItem('themeOverride');
+            var chosen = override || slot(new Date().getHours());
+            // Set attribute so :root[data-theme="..."] variables apply immediately
+            document.documentElement.setAttribute('data-theme', chosen);
+        })();
+    </script>
     <!-- Character Encoding -->
     <meta charset="utf-8">
     <!-- Compatibility with Internet Explorer -->
@@ -27,19 +48,22 @@
     <link rel="stylesheet" href="home/css/index.css">
     <!-- Variables Stylesheet (CSS variables and custom properties) -->
     <link rel="stylesheet" href="home/css/variables.css">
+    <!-- Themes Stylesheet -->
+    <link rel="stylesheet" href="home/css/themes.css">
 </head>
 
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-JL3S004PD9"></script>
 <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
+    function gtag() { dataLayer.push(arguments); }
     gtag('js', new Date());
 
     gtag('config', 'G-JL3S004PD9');
 </script>
 
-<body itemscope="" itemtype="http://schema.org/WebPage" data-new-gr-c-s-check-loaded="14.1030.0" data-gr-ext-installed="">
+<body itemscope="" itemtype="http://schema.org/WebPage" data-new-gr-c-s-check-loaded="14.1030.0"
+    data-gr-ext-installed="">
 
     <!-- Loader Animation -->
     <div id="loader">
@@ -77,12 +101,12 @@
 
     <!-- Main Container -->
     <div id="page-wrap">
-       
+
         <!-- Header Nav -->
         <nav itemscope="" itemtype="http://schema.org/SiteNavigationElement" class="main-navigation is-loaded">
             <!-- Navigation Content -->
             <div class="content nav-content">
-                
+
                 <!-- Logo Link -->
                 <a href="https://aykhan.net" data-destination="home" itemprop="url" class="nav-logo">
                     <!-- Logo -->
@@ -127,14 +151,14 @@
                                 5 113 -113z" />
                         </g>
                     </svg>
-                    
+
                     <img src="" />
                     <!-- Hidden text for screen readers -->
                     <span itemprop="name" class="visual-hide">Home</span>
                     <!-- Accessible label for screen readers -->
                     <span aria-label="Aykhan Ahmadzada's Logo">Aykhan Ahmadzada's Logo</span>
                 </a>
-                
+
                 <!-- Mobile Menu Toggle Button -->
                 <div aria-label="Mobile Menu" class="nav-toggle">
                     <!-- Visual menu trigger for mobile view -->
@@ -144,7 +168,7 @@
                         <i class="menu-trigger-bar bottom"></i>
                     </span>
                 </div>
-                
+
                 <!-- Navigation Links -->
                 <ul class="nav-links">
                     <!-- Link to Journey Section -->
@@ -175,7 +199,7 @@
 
         <!-- Mobile Menu -->
         <nav class="mobile-menu">
-            
+
             <!-- Close Button -->
             <span aria-label="Close" class="close-trigger">
                 <!-- Visual representation of the close button (two diagonal lines forming an "X") -->
@@ -183,7 +207,7 @@
                 <i class="close-trigger-bar right"></i>
             </span>
 
-            <!-- Mobile Navigation Links -->
+            <!-- (Mobile) Navigation Links -->
             <ul class="mobile-nav-links">
                 <li>
                     <a href="#journey-overview" itemprop="url" class="no-smoothState no-single-work">My Journey</a>
@@ -196,7 +220,7 @@
                 </li>
             </ul>
 
-            <!-- Social Media Links -->
+            <!-- (Mobile) Social Media Links -->
             <ul class="nav-social-stripe">
                 <!-- Github -->
                 <li>
@@ -211,7 +235,8 @@
                 </li>
                 <!-- YouTube -->
                 <li>
-                    <a href="https://www.youtube.com/@aykhan.projects/" target="_blank" rel="noopener" itemprop="sameAs">
+                    <a href="https://www.youtube.com/@aykhan.projects/" target="_blank" rel="noopener"
+                        itemprop="sameAs">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                             class="bi bi-youtube" viewBox="0 0 16 16">
                             <path
@@ -230,18 +255,14 @@
                         </svg>
                     </a>
                 </li>
-                <!-- LeetCode -->
+                <!-- X -->
                 <li>
-                    <a href="https://leetcode.com/aykhan019/" target="_blank" rel="noopener" itemprop="sameAs"
-                        class="dribbble">
-                        <svg fill="#000000" viewBox="0 0 24 24" role="img" xmlns="http://www.w3.org/2000/svg">
-                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                            <g id="SVGRepo_iconCarrier">
-                                <path
-                                    d="M16.102 17.93l-2.697 2.607c-.466.467-1.111.662-1.823.662s-1.357-.195-1.824-.662l-4.332-4.363c-.467-.467-.702-1.15-.702-1.863s.235-1.357.702-1.824l4.319-4.38c.467-.467 1.125-.645 1.837-.645s1.357.195 1.823.662l2.697 2.606c.514.515 1.365.497 1.9-.038.535-.536.553-1.387.039-1.901l-2.609-2.636a5.055 5.055 0 0 0-2.445-1.337l2.467-2.503c.516-.514.498-1.366-.037-1.901-.535-.535-1.387-.552-1.902-.038l-10.1 10.101c-.981.982-1.494 2.337-1.494 3.835 0 1.498.513 2.895 1.494 3.875l4.347 4.361c.981.979 2.337 1.452 3.834 1.452s2.853-.512 3.835-1.494l2.609-2.637c.514-.514.496-1.365-.039-1.9s-1.386-.553-1.899-.039zM20.811 13.01H10.666c-.702 0-1.27.604-1.27 1.346s.568 1.346 1.27 1.346h10.145c.701 0 1.27-.604 1.27-1.346s-.569-1.346-1.27-1.346z">
-                                </path>
-                            </g>
+                    <a href="https://x.com/aykhan0x19/" target="_blank" rel="noopener" itemprop="sameAs">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="#000000" class="bi bi-twitter-x"
+                            viewBox="0 0 16 16" id="Twitter-X--Streamline-Bootstrap" height="16" width="16">
+                            <path
+                                d="M12.6 0.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867 -5.07 -4.425 5.07H0.316l5.733 -6.57L0 0.75h5.063l3.495 4.633L12.601 0.75Zm-0.86 13.028h1.36L4.323 2.145H2.865z"
+                                stroke-width="1"></path>
                         </svg>
                     </a>
                 </li>
@@ -257,19 +278,20 @@
                         </svg>
                     </a>
                 </li>
-                <!-- Medium -->
+                <!-- HackerOne -->
                 <li>
-                    <a href="https://medium.com/@Aykhan-Ahmadzada/" target="_blank" rel="noopener" itemprop="sameAs">
-                        <!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-                        <svg width="800px" height="800px" viewBox="0 -55 256 256" version="1.1"
-                            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                            preserveAspectRatio="xMidYMid">
-                            <g>
-                                <path
-                                    d="M72.2009141,1.42108547e-14 C112.076502,1.42108547e-14 144.399375,32.5485469 144.399375,72.6964154 C144.399375,112.844284 112.074049,145.390378 72.2009141,145.390378 C32.327779,145.390378 0,112.844284 0,72.6964154 C0,32.5485469 32.325326,1.42108547e-14 72.2009141,1.42108547e-14 Z M187.500628,4.25836743 C207.438422,4.25836743 223.601085,34.8960455 223.601085,72.6964154 L223.603538,72.6964154 C223.603538,110.486973 207.440875,141.134463 187.503081,141.134463 C167.565287,141.134463 151.402624,110.486973 151.402624,72.6964154 C151.402624,34.9058574 167.562834,4.25836743 187.500628,4.25836743 Z M243.303393,11.3867175 C250.314,11.3867175 256,38.835526 256,72.6964154 C256,106.547493 250.316453,134.006113 243.303393,134.006113 C236.290333,134.006113 230.609239,106.554852 230.609239,72.6964154 C230.609239,38.837979 236.292786,11.3867175 243.303393,11.3867175 Z"
-                                    fill="#000000">
-
-                                </path>
+                    <a href="https://hackerone.com/aykhan0x19" target="_blank" rel="noopener" itemprop="sameAs"
+                        class="dribbble">
+                        <svg viewBox="-111 0 478 478" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                            xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid" fill="#000000">
+                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                            <g id="SVGRepo_iconCarrier">
+                                <g>
+                                    <path
+                                        d="M9.13221479,5.980788 C3.0751745,9.96497004 0,15.1772152 0,21.4850854 L0,455.325487 C0,460.827692 3.14942015,465.825226 9.45729033,470.464576 C15.7200111,475.111952 23.439552,477.427614 32.6530356,477.427614 C41.4591716,477.427614 49.1797157,475.111952 55.8859038,470.464576 C62.5559723,465.870376 65.9491991,460.827692 65.9491991,455.325487 L65.9491991,21.5232116 C65.9491991,15.1772152 62.7185101,10.0472422 56.2119826,5.980788 C49.7044518,2.03372878 41.865516,0 32.6530356,0 C23.0332075,0 15.1942717,2.03372878 9.13221479,5.980788 Z M198.855933,178.299922 L110.559797,233.64604 C106.603708,237.347286 104.903082,242.970892 105.634502,250.65632 C106.315756,258.266499 109.834397,265.512473 116.060999,272.349093 C122.316696,279.229858 129.31184,283.542126 137.312311,285.374187 C145.194389,287.161099 151.177184,286.185873 155.133273,282.52175 L190.048794,260.745702 L190.048794,455.325487 C190.048794,460.827692 193.080826,465.825226 199.218132,470.464576 C205.199923,475.111952 212.882341,477.427614 222.095825,477.427614 C231.309309,477.427614 239.265633,475.111952 245.935701,470.464576 C252.641889,465.825226 256,460.827692 256,455.325487 L256,193.722951 C256,187.369931 252.723158,182.246981 246.260777,178.299922 C239.791372,174.270591 231.752776,172.312111 222.095825,172.312111 C212.475997,172.312111 204.755453,174.270591 198.855933,178.299922 Z"
+                                        fill="#000000"> </path>
+                                </g>
                             </g>
                         </svg>
                     </a>
@@ -289,7 +311,7 @@
                         <!-- Title with slight indentation -->
                         <h1 itemprop="author" class="main-hero-title" style="text-indent: 5px;">Aykhan Ahmadzada</h1>
                     </div>
-                    
+
                     <div>
                         <!-- Loading mask for the subtitle -->
                         <div class="text-loading-mask">
@@ -298,16 +320,18 @@
                             <h3 itemprop="specialty" class="main-hero-subtitle h5">Computer Engineering Student</h3>
                         </div>
                     </div>
-                    
+
                     <div>
                         <!-- Loading mask for the call-to-action button -->
                         <div style="width: 175px;" class="text-loading-mask">
-                            <div id="item" class="text-loading-overlay"></div> <!-- Overlay for button loading effect -->
+                            <div id="item" class="text-loading-overlay"></div>
+                            <!-- Overlay for button loading effect -->
                             <!-- Call-to-action button linking to the #journey-overview section -->
                             <a href="#journey-overview" class="the-button call-to-button no-smoothstate open-contact">
                                 <!-- Button text -->
                                 <span class="button-text">Explore</span>
-                                <div class="button-mask"></div> <!-- Mask that overlays the button for the loading effect -->
+                                <div class="button-mask"></div>
+                                <!-- Mask that overlays the button for the loading effect -->
                                 <!-- Button icon (arrow) -->
                                 <span class="button-icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 476.213 476.213">
@@ -319,7 +343,7 @@
                             </a>
                         </div>
                     </div>
-                    
+
                 </div> <!-- End of content wrapper -->
             </div> <!-- End of main hero text section -->
 
@@ -361,19 +385,22 @@
                 </svg>
 
                 <!-- Shape instances using the defined symbols with transformations and colors -->
-            
+
                 <!-- Triangle instance (yellow) -->
-                <svg width="25px" height="25px" class="layer1 p1" style="transform: matrix(-1, 0, 0, -1, 23.3846, -10.2308);">
+                <svg width="25px" height="25px" class="layer1 p1"
+                    style="transform: matrix(-1, 0, 0, -1, 23.3846, -10.2308);">
                     <use xlink:href="#triangle" class="yellow"></use>
                 </svg>
 
                 <!-- Semi-circle instance (yellow) -->
-                <svg width="28px" height="28px" class="layer1 p2" style="transform: matrix(1, 0, 0, 1, 23.3846, -10.2308);">
+                <svg width="28px" height="28px" class="layer1 p2"
+                    style="transform: matrix(1, 0, 0, 1, 23.3846, -10.2308);">
                     <use xlink:href="#semiCircle" class="yellow"></use>
                 </svg>
 
                 <!-- Rotated triangle (aqua) -->
-                <svg width="25px" height="25px" class="layer2 p3" style="transform: matrix3d(0.70711, 0.70711, 0, 0, -0.70711, 0.70711, 0, 0, 0, 0, 1, 0, -23.385, 10.2316, 0, 1);">
+                <svg width="25px" height="25px" class="layer2 p3"
+                    style="transform: matrix3d(0.70711, 0.70711, 0, 0, -0.70711, 0.70711, 0, 0, 0, 0, 1, 0, -23.385, 10.2316, 0, 1);">
                     <use width="25px" height="25px" xlink:href="#triangle" class="aqua"></use>
                 </svg>
 
@@ -383,37 +410,44 @@
                 </svg>
 
                 <!-- Semi-circle (aqua) with rotation -->
-                <svg width="28px" height="28px" class="layer1 p5" style="transform: matrix(0.70711, 0.7071, -0.7071, 0.70711, 23.3846, -10.2308);">
+                <svg width="28px" height="28px" class="layer1 p5"
+                    style="transform: matrix(0.70711, 0.7071, -0.7071, 0.70711, 23.3846, -10.2308);">
                     <use xlink:href="#semiCircle" class="aqua"></use>
                 </svg>
 
                 <!-- Spring shape (pink) with 3D transformation -->
-                <svg width="36px" height="36px" class="layer2 p6" style="transform: matrix3d(0.70711, 0.70711, 0, 0, -0.70711, 0.70711, 0, 0, 0, 0, 1, 0, -23.385, 10.2316, 0, 1);">
+                <svg width="36px" height="36px" class="layer2 p6"
+                    style="transform: matrix3d(0.70711, 0.70711, 0, 0, -0.70711, 0.70711, 0, 0, 0, 0, 1, 0, -23.385, 10.2316, 0, 1);">
                     <use xlink:href="#spring" class="pink"></use>
                 </svg>
 
                 <!-- Spring shape (pink) translated along the 3D axis -->
-                <svg width="36px" height="36px" class="layer2 p7" style="transform: translate3d(-23.385px, 10.2316px, 0px);">
+                <svg width="36px" height="36px" class="layer2 p7"
+                    style="transform: translate3d(-23.385px, 10.2316px, 0px);">
                     <use xlink:href="#spring" class="pink"></use>
                 </svg>
 
                 <!-- Line shape (aqua) translated along the 3D axis -->
-                <svg width="22px" height="22px" class="layer2 p8" style="transform: translate3d(-23.385px, 10.2316px, 0px);">
+                <svg width="22px" height="22px" class="layer2 p8"
+                    style="transform: translate3d(-23.385px, 10.2316px, 0px);">
                     <use xlink:href="#line" class="aqua"></use>
                 </svg>
 
                 <!-- Line shape (aqua) rotated with matrix transformation -->
-                <svg width="22px" height="22px" class="layer1 p9" style="transform: matrix(0.42262, 0.90631, -0.90631, 0.42262, 23.3846, -10.2308);">
+                <svg width="22px" height="22px" class="layer1 p9"
+                    style="transform: matrix(0.42262, 0.90631, -0.90631, 0.42262, 23.3846, -10.2308);">
                     <use xlink:href="#line" class="aqua"></use>
                 </svg>
 
                 <!-- Line shape (yellow) with 3D matrix transformation -->
-                <svg width="22px" height="22px" class="layer2 p10" style="transform: matrix3d(0.08716, 0.9962, 0, 0, -0.9962, 0.08716, 0, 0, 0, 0, 1, 0, -23.385, 10.2316, 0, 1);">
+                <svg width="22px" height="22px" class="layer2 p10"
+                    style="transform: matrix3d(0.08716, 0.9962, 0, 0, -0.9962, 0.08716, 0, 0, 0, 0, 1, 0, -23.385, 10.2316, 0, 1);">
                     <use xlink:href="#line" class="yellow"></use>
                 </svg>
 
                 <!-- Semi-circle (aqua) with reflection (matrix -1, 0) -->
-                <svg width="28px" height="28px" class="layer1 p11" style="transform: matrix(-1, 0, 0, -1, 23.3846, -10.2308);">
+                <svg width="28px" height="28px" class="layer1 p11"
+                    style="transform: matrix(-1, 0, 0, -1, 23.3846, -10.2308);">
                     <use xlink:href="#semiCircle" class="aqua"></use>
                 </svg>
 
@@ -482,7 +516,8 @@
                 </li>
                 <!-- YouTube -->
                 <li>
-                    <a href="https://www.youtube.com/@aykhan.projects/" target="_blank" rel="noopener" itemprop="sameAs">
+                    <a href="https://www.youtube.com/@aykhan.projects/" target="_blank" rel="noopener"
+                        itemprop="sameAs">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                             class="bi bi-youtube" viewBox="0 0 16 16">
                             <path
@@ -501,18 +536,14 @@
                         </svg>
                     </a>
                 </li>
-                <!-- LeetCode -->
+                <!-- X -->
                 <li>
-                    <a href="https://leetcode.com/aykhan019/" target="_blank" rel="noopener" itemprop="sameAs"
-                        class="dribbble">
-                        <svg fill="#000000" viewBox="0 0 24 24" role="img" xmlns="http://www.w3.org/2000/svg">
-                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                            <g id="SVGRepo_iconCarrier">
-                                <path
-                                    d="M16.102 17.93l-2.697 2.607c-.466.467-1.111.662-1.823.662s-1.357-.195-1.824-.662l-4.332-4.363c-.467-.467-.702-1.15-.702-1.863s.235-1.357.702-1.824l4.319-4.38c.467-.467 1.125-.645 1.837-.645s1.357.195 1.823.662l2.697 2.606c.514.515 1.365.497 1.9-.038.535-.536.553-1.387.039-1.901l-2.609-2.636a5.055 5.055 0 0 0-2.445-1.337l2.467-2.503c.516-.514.498-1.366-.037-1.901-.535-.535-1.387-.552-1.902-.038l-10.1 10.101c-.981.982-1.494 2.337-1.494 3.835 0 1.498.513 2.895 1.494 3.875l4.347 4.361c.981.979 2.337 1.452 3.834 1.452s2.853-.512 3.835-1.494l2.609-2.637c.514-.514.496-1.365-.039-1.9s-1.386-.553-1.899-.039zM20.811 13.01H10.666c-.702 0-1.27.604-1.27 1.346s.568 1.346 1.27 1.346h10.145c.701 0 1.27-.604 1.27-1.346s-.569-1.346-1.27-1.346z">
-                                </path>
-                            </g>
+                    <a href="https://x.com/aykhan0x19/" target="_blank" rel="noopener" itemprop="sameAs">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="#000000" class="bi bi-twitter-x"
+                            viewBox="0 0 16 16" id="Twitter-X--Streamline-Bootstrap" height="16" width="16">
+                            <path
+                                d="M12.6 0.75h2.454lF-5.36 6.142L16 15.25h-4.937l-3.867 -5.07 -4.425 5.07H0.316l5.733 -6.57L0 0.75h5.063l3.495 4.633L12.601 0.75Zm-0.86 13.028h1.36L4.323 2.145H2.865z"
+                                stroke-width="1"></path>
                         </svg>
                     </a>
                 </li>
@@ -528,19 +559,20 @@
                         </svg>
                     </a>
                 </li>
-                <!-- Medium -->
+                <!-- HackerOne -->
                 <li>
-                    <a href="https://medium.com/@Aykhan-Ahmadzada/" target="_blank" rel="noopener" itemprop="sameAs">
-                        <!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-                        <svg width="800px" height="800px" viewBox="0 -55 256 256" version="1.1"
-                            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                            preserveAspectRatio="xMidYMid">
-                            <g>
-                                <path
-                                    d="M72.2009141,1.42108547e-14 C112.076502,1.42108547e-14 144.399375,32.5485469 144.399375,72.6964154 C144.399375,112.844284 112.074049,145.390378 72.2009141,145.390378 C32.327779,145.390378 0,112.844284 0,72.6964154 C0,32.5485469 32.325326,1.42108547e-14 72.2009141,1.42108547e-14 Z M187.500628,4.25836743 C207.438422,4.25836743 223.601085,34.8960455 223.601085,72.6964154 L223.603538,72.6964154 C223.603538,110.486973 207.440875,141.134463 187.503081,141.134463 C167.565287,141.134463 151.402624,110.486973 151.402624,72.6964154 C151.402624,34.9058574 167.562834,4.25836743 187.500628,4.25836743 Z M243.303393,11.3867175 C250.314,11.3867175 256,38.835526 256,72.6964154 C256,106.547493 250.316453,134.006113 243.303393,134.006113 C236.290333,134.006113 230.609239,106.554852 230.609239,72.6964154 C230.609239,38.837979 236.292786,11.3867175 243.303393,11.3867175 Z"
-                                    fill="#000000">
-
-                                </path>
+                    <a href="https://hackerone.com/aykhan0x19/" target="_blank" rel="noopener" itemprop="sameAs"
+                        class="dribbble">
+                        <svg viewBox="-111 0 478 478" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                            xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid" fill="#000000">
+                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                            <g id="SVGRepo_iconCarrier">
+                                <g>
+                                    <path
+                                        d="M9.13221479,5.980788 C3.0751745,9.96497004 0,15.1772152 0,21.4850854 L0,455.325487 C0,460.827692 3.14942015,465.825226 9.45729033,470.464576 C15.7200111,475.111952 23.439552,477.427614 32.6530356,477.427614 C41.4591716,477.427614 49.1797157,475.111952 55.8859038,470.464576 C62.5559723,465.870376 65.9491991,460.827692 65.9491991,455.325487 L65.9491991,21.5232116 C65.9491991,15.1772152 62.7185101,10.0472422 56.2119826,5.980788 C49.7044518,2.03372878 41.865516,0 32.6530356,0 C23.0332075,0 15.1942717,2.03372878 9.13221479,5.980788 Z M198.855933,178.299922 L110.559797,233.64604 C106.603708,237.347286 104.903082,242.970892 105.634502,250.65632 C106.315756,258.266499 109.834397,265.512473 116.060999,272.349093 C122.316696,279.229858 129.31184,283.542126 137.312311,285.374187 C145.194389,287.161099 151.177184,286.185873 155.133273,282.52175 L190.048794,260.745702 L190.048794,455.325487 C190.048794,460.827692 193.080826,465.825226 199.218132,470.464576 C205.199923,475.111952 212.882341,477.427614 222.095825,477.427614 C231.309309,477.427614 239.265633,475.111952 245.935701,470.464576 C252.641889,465.825226 256,460.827692 256,455.325487 L256,193.722951 C256,187.369931 252.723158,182.246981 246.260777,178.299922 C239.791372,174.270591 231.752776,172.312111 222.095825,172.312111 C212.475997,172.312111 204.755453,174.270591 198.855933,178.299922 Z"
+                                        fill="#000000"> </path>
+                                </g>
                             </g>
                         </svg>
                     </a>
@@ -562,7 +594,8 @@
                 <!-- Circle 1 -->
                 <div data-rellax-speed="-1" class="circle1 rellax">
                     <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" viewBox="0 0 70 70">
-                        <circle fill="none" stroke="#6107EF" stroke-width="9" stroke-miterlimit="10" cx="35" cy="35.1" r="28.5"></circle>
+                        <circle fill="none" stroke="#6107EF" stroke-width="9" stroke-miterlimit="10" cx="35" cy="35.1"
+                            r="28.5"></circle>
                     </svg>
                 </div>
 
@@ -576,7 +609,8 @@
                 <!-- Triangle 1 -->
                 <div data-rellax-speed="1" class="triangle1 rellax">
                     <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" viewBox="0 0 70 70">
-                        <path fill="none" stroke="#0FE851" stroke-width="8" stroke-miterlimit="10" d="M12.6 56l22.8-39.5L58.2 56z"></path>
+                        <path fill="none" stroke="#0FE851" stroke-width="8" stroke-miterlimit="10"
+                            d="M12.6 56l22.8-39.5L58.2 56z"></path>
                     </svg>
                 </div>
 
@@ -591,7 +625,8 @@
                 <!-- Circle 2 -->
                 <div data-rellax-speed="-1.3" class="circle2 rellax">
                     <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" viewBox="0 0 70 70">
-                        <circle fill="none" stroke="#6107EF" stroke-width="9" stroke-miterlimit="10" cx="35" cy="35.1" r="28.5"></circle>
+                        <circle fill="none" stroke="#6107EF" stroke-width="9" stroke-miterlimit="10" cx="35" cy="35.1"
+                            r="28.5"></circle>
                     </svg>
                 </div>
 
@@ -605,7 +640,8 @@
                 <!-- Triangle 2 -->
                 <div data-rellax-speed="1" class="triangle2 rellax">
                     <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" viewBox="0 0 70 70">
-                        <path fill="none" stroke="#0FE851" stroke-width="8" stroke-miterlimit="10" d="M12.6 56l22.8-39.5L58.2 56z"></path>
+                        <path fill="none" stroke="#0FE851" stroke-width="8" stroke-miterlimit="10"
+                            d="M12.6 56l22.8-39.5L58.2 56z"></path>
                     </svg>
                 </div>
 
@@ -627,7 +663,8 @@
                 <!-- Circle 3 -->
                 <div data-rellax-speed="1.3" class="circle3 rellax">
                     <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" viewBox="0 0 70 70">
-                        <circle fill="none" stroke="#6107EF" stroke-width="9" stroke-miterlimit="10" cx="35" cy="35.1" r="28.5"></circle>
+                        <circle fill="none" stroke="#6107EF" stroke-width="9" stroke-miterlimit="10" cx="35" cy="35.1"
+                            r="28.5"></circle>
                     </svg>
                 </div>
 
@@ -640,17 +677,19 @@
                 </div>
             </div>
 
-           <!-- My Coding Journey Section Start -->
+            <!-- My Coding Journey Section Start -->
             <section class="services main-item" id="journey-overview">
-                <h2 class="title">My Programming & AI Journey</h2>
+                <h2 class="title">My Programming Journey</h2>
                 <div class="services-container">
                     <div class="serv-content">
                         <!-- Step IT Academy -->
                         <a href="https://aykhan.net/step-it-academy/" class="card">
                             <div class="box">
-                                <img src="https://media.aykhan.net/assets/icons/step-it-academy-blue.png" alt="Step IT Academy" style="height: 90px; margin-top: -20px;">
+                                <img src="https://media.aykhan.net/assets/icons/step-it-academy-blue.png"
+                                    alt="Step IT Academy" style="height: 90px; margin-top: -20px;">
                                 <div class="text">Step IT Academy</div>
-                                <p>The place where my coding journey began. Explore the tasks and projects I completed during my programming learning experience.</p>
+                                <p>The place where my coding journey began. Explore the tasks and projects I completed
+                                    during my programming learning experience.</p>
                             </div>
                         </a>
                         <!-- GitHub -->
@@ -658,7 +697,8 @@
                             <div class="box">
                                 <img src="https://media.aykhan.net/assets/icons/github.svg" alt="GitHub">
                                 <div class="text">Github</div>
-                                <p>Explore my code repositories on GitHub, where I store my coding projects and collaborate with others.</p>
+                                <p>Explore my code repositories on GitHub, where I store my coding projects and
+                                    collaborate with others.</p>
                             </div>
                         </a>
                         <!-- Koç University -->
@@ -666,7 +706,8 @@
                             <div class="box">
                                 <img src="https://media.aykhan.net/assets/icons/koc.svg" alt="Koç University">
                                 <div class="text">Koç University</div>
-                                <p>I am currently pursuing a bachelor's degree at Koç University. This section includes projects and tasks related to my studies at the university.</p>
+                                <p>I am currently pursuing a bachelor's degree at Koç University. This section includes
+                                    projects and tasks related to my studies at the university.</p>
                             </div>
                         </a>
                         <!-- Projects -->
@@ -674,7 +715,8 @@
                             <div class="box">
                                 <img src="https://media.aykhan.net/assets/icons/projects.svg" alt="Projects">
                                 <div class="text">Projects</div>
-                                <p>Explore some of my projects to learn more about the different applications I've developed.</p>
+                                <p>Explore some of my projects to learn more about the different applications I've
+                                    developed.</p>
                             </div>
                         </a>
                     </div>
@@ -690,17 +732,21 @@
                             <!-- Certificates -->
                             <a href="https://aykhan.net/achievements/certificates" class="card">
                                 <div class="box">
-                                    <img class="achievements-card-icon" src="https://media.aykhan.net/assets/icons/certificate.svg" alt="Certificates">
+                                    <img class="achievements-card-icon"
+                                        src="https://media.aykhan.net/assets/icons/certificate.svg" alt="Certificates">
                                     <div class="text">Certificates</div>
-                                    <p>Explore my certificates from courses and training programs, reflecting my dedication to continuous learning.</p>
+                                    <p>Explore my certificates from courses and training programs, reflecting my
+                                        dedication to continuous learning.</p>
                                 </div>
                             </a>
                             <!-- Badges -->
                             <a href="https://aykhan.net/achievements/badges" class="card">
                                 <div class="box">
-                                    <img class="achievements-card-icon" src="https://media.aykhan.net/assets/icons/badge.svg" alt="Badges">
+                                    <img class="achievements-card-icon"
+                                        src="https://media.aykhan.net/assets/icons/badge.svg" alt="Badges">
                                     <div class="text">Badges</div>
-                                    <p>Discover my earned badges and achievements from different platforms, reflecting my skills and expertise.</p>
+                                    <p>Discover my earned badges and achievements from different platforms, reflecting
+                                        my skills and expertise.</p>
                                 </div>
                             </a>
                         </div>
@@ -714,20 +760,39 @@
                     <h2 class="title">Discover More</h2>
                     <div class="services-container">
                         <div class="serv-content">
-                            <!-- Leetcode -->
-                            <a href="https://aykhan.net/leetcode" class="card">
+                            <!-- Books -->
+                            <a href="https://aykhan.net/books/" class="card">
                                 <div class="box">
-                                    <img src="https://media.aykhan.net/assets/icons/leetcode.svg" alt="Leetcode">
-                                    <div class="text">Leetcode</div>
-                                    <p>Find extensive notes, practical solutions, algorithms, and key techniques for Leetcode challenges.</p>
+                                    <img src="https://media.aykhan.net/assets/icons/books.svg" alt="Books">
+                                    <div class="text">Books&trade;</div>
+                                    <p> Concise books from my Notion notes, polished with GPT and my edits.</p>
+                                </div>
+                            </a>
+                            <!-- Hackerone -->
+                            <a href="https://aykhan.net/hackerone/" class="card">
+                                <div class="box">
+                                    <img src="https://media.aykhan.net/assets/icons/hackerone.svg" alt="Hackerone">
+                                    <div class="text">HackerOne</div>
+                                    <p>Bug bounty profile: public reports, program activity, and progress.</p>
                                 </div>
                             </a>
                             <!-- Notion -->
-                            <a href="https://aykhan.net/notion" class="card">
+                            <a href="https://aykhan.net/notion/" class="card">
                                 <div class="box">
                                     <img src="https://media.aykhan.net/assets/icons/notion.svg" alt="Notion">
                                     <div class="text">Notion</div>
-                                    <p>Explore in-depth notes from a range of courses, highlighting valuable insights and key concepts.</p>
+                                    <p>Explore in-depth notes from a range of courses, highlighting valuable insights
+                                        and key concepts.</p>
+                                </div>
+                            </a>
+                            <!-- Cyber Security -->
+                            <a href="https://aykhan.net/cyber-security/" class="card">
+                                <div class="box">
+                                    <img src="https://media.aykhan.net/assets/icons/cybersecurity.svg"
+                                        alt="Cyber Security">
+                                    <div class="text">Cyber Security</div>
+                                    <p> Timeline of my cybersecurity journey: PortSwigger, labs, HTB, H1,
+                                        certifications, and bug bounty milestones. </p>
                                 </div>
                             </a>
                         </div>
@@ -796,23 +861,25 @@
                         </li>
                         <!-- YouTube link -->
                         <li>
-                            <a href="https://www.youtube.com/@aykhan.projects" target="_blank" rel="noopener">YouTube</a>
+                            <a href="https://www.youtube.com/@aykhan.projects" target="_blank"
+                                rel="noopener">YouTube</a>
                         </li>
                         <!-- Notion link -->
                         <li>
                             <a href="https://aykhan.net/notion" target="_blank" rel="noopener">Notion</a>
                         </li>
-                        <!-- Leetcode link -->
+                        <!-- HackerOne link -->
                         <li>
-                            <a href="https://leetcode.com/aykhan019/" target="_blank" rel="noopener">Leetcode</a>
+                            <a href="https://hackerone.com/aykhan0x19/" target="_blank" rel="noopener">HackerOne</a>
                         </li>
                         <!-- LinkedIn link -->
                         <li>
-                            <a href="https://www.linkedin.com/in/aykhan-ahmadzada/" target="_blank" rel="noopener">LinkedIn</a>
+                            <a href="https://www.linkedin.com/in/aykhan-ahmadzada/" target="_blank"
+                                rel="noopener">LinkedIn</a>
                         </li>
-                        <!-- Medium link -->
+                        <!-- X link -->
                         <li>
-                            <a href="https://medium.com/@Aykhan-Ahmadzada/" target="_blank" rel="noopener">Medium</a>
+                            <a href="https://x.com/aykhan0x19/" target="_blank" rel="noopener">X.com</a>
                         </li>
                     </ul>
                 </div>
@@ -836,7 +903,7 @@
 
 <!-- jQuery Library -->
 <script src="home/js/jquery.min.js"></script>
-<!-- Application-Specific JavaScript -->
+<!-- Application-Specific JavaScript Files -->
 <script src="home/js/application.js"></script>
 
 </html>

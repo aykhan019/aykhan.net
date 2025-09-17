@@ -5014,3 +5014,63 @@ var Util = function (t) {
         }
     }(jQuery);
 Application.start();
+
+/*!
+ * Time-based theme switcher for aykhan.net
+ * - 4 themes, 4 time slots (local time):
+ *   night   00:00–05:59
+ *   morning 06:00–11:59
+ *   afternoon 12:00–17:59
+ *   evening 18:00–23:59
+ * - Respects localStorage 'themeOverride' when present
+ * - Re-checks exactly at the start of each hour
+ */
+(function () {
+  'use strict';
+
+  const root = document.documentElement;
+
+  // Decide which slot applies for a given Date
+  function currentSlot(d = new Date()) {
+    const h = d.getHours();
+    if (h < 6)  return 'night';
+    if (h < 12) return 'morning';
+    if (h < 18) return 'afternoon';
+    return 'evening';
+  }
+
+  // Apply theme by setting the data attribute (CSS uses :root[data-theme="..."])
+  function apply(slot) {
+    root.setAttribute('data-theme', slot);
+  }
+
+  // If an override exists, use it; otherwise compute by time
+  function refresh() {
+    const override = localStorage.getItem('themeOverride'); // 'night'|'morning'|'afternoon'|'evening' or null
+    apply(override || currentSlot());
+  }
+
+  // Milliseconds until the top of the next hour (align updates cleanly)
+  function msUntilNextHour(now = new Date()) {
+    const next = new Date(now);
+    next.setHours(now.getHours() + 1, 0, 0, 0); // set to :00 of next hour
+    return next - now;
+  }
+
+  // Initial apply ASAP
+  refresh();
+
+  // Align to next hour, then refresh every hour
+  setTimeout(() => {
+    refresh();
+    setInterval(refresh, 60 * 60 * 1000);
+  }, msUntilNextHour());
+
+  // Optional tiny debug API (use in DevTools). Remove if not needed.
+  // Theme.set('night'|'morning'|'afternoon'|'evening') to force; Theme.clear() to return to auto.
+  window.Theme = {
+    set(name) { localStorage.setItem('themeOverride', name); refresh(); },
+    clear()   { localStorage.removeItem('themeOverride');   refresh(); },
+    get()     { return localStorage.getItem('themeOverride') || currentSlot(); }
+  };
+})();
