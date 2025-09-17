@@ -9,6 +9,7 @@ body.loaded {
     background-color: var(--third-color);
 }
 
+
 #page-wrap {
     opacity: 0;
 }

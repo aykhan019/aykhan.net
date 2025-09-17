@@ -1,51 +1,11 @@
-/* Afternoon — 12:00–17:59 (your current palette) */
-:root[data-theme="afternoon"]{
-  --first-color:#235aa6;
-  --second-color:#1C1D25; 
-  --third-color:#F3F3F3;
-  --fourth-color:#f06449; 
-  --fifth-color:#252a60; 
-  --sixth-color:#4c4f65;
-  --seventh-color:#111; 
-  --eighth-color:#f3f3f38c; 
-  --ninth-color:#eaeaea;
-}
-
-/* Morning — 06:00–11:59 (Dawn Mist) */
-:root[data-theme="morning"]{
-  --first-color:#0EA5E9; 
-  --second-color:#1F2937; 
-  --third-color:#FFF8F1;
-  --fourth-color:#FB923C; 
-  --fifth-color:#0369A1; 
-  --sixth-color:#64748B;
-  --seventh-color:#0B1220; 
-  --eighth-color:#fff8f199; 
-  --ninth-color:#F5E7DC;
-}
-
-/* Evening — 18:00–23:59 (Sunset Coral) */
-:root[data-theme="evening"]{
-  --first-color:#F59E0B; 
-  --second-color:#0F172A; 
-  --third-color:#f8ffc1;
-  --fourth-color:#f06449; 
-  --fifth-color:#1E293B; 
-  --sixth-color:#64748B;
-  --seventh-color:#0B1220; 
-  --eighth-color:#fff8f199; 
-  --ninth-color:#F5E7DC;
-}
-
-/* Night — 00:00–05:59 (Midnight Neon) */
-:root[data-theme="night"]{
-  --first-color:#22D3EE; 
-  --second-color:#0B1220; 
-  --third-color:#c9d3e9;
-  --fourth-color:#7DD3FC; 
-  --fifth-color:#38BDF8; 
-  --sixth-color:#93C5FD;
-  --seventh-color:#0A0F1A; 
-  --eighth-color:#0B122099; 
-  --ninth-color:#1E293B;
+  :root {
+  --first-color: #235aa6;
+  --second-color: #1C1D25;
+  --third-color: #F3F3F3;
+  --fourth-color: #f06449;
+  --fifth-color: #252a60; 
+  --sixth-color: #4c4f65;
+  --seventh-color: #111;
+  --eighth-color: #f3f3f38c;
+  --ninth-color: #eaeaea;
 }
