@@ -635,7 +635,16 @@
     /* ------------------------------- boot ---------------------------------- */
 
     function banner() {
-        print(el("div", "banner", "aykhan.net"));
+        var art = [
+            "██████  ██  ██  ██  ██  ██  ██  ██████  ██  ██      ██  ██  ██████  ██████",
+            "██  ██  ██  ██  ██ ██   ██  ██  ██  ██  ███ ██      ███ ██  ██        ██  ",
+            "██████   ████   ████    ██████  ██████  ██████      ██████  █████     ██  ",
+            "██  ██    ██    ██ ██   ██  ██  ██  ██  ██ ███      ██ ███  ██        ██  ",
+            "██  ██    ██    ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██████    ██  "
+        ];
+        var pre = el("pre", "banner");
+        pre.textContent = art.join("\n");
+        print(pre);
         printLine("· terminal gateway ·", "muted");
         printLine("Read-only gateway to media.aykhan.net & data.aykhan.net.", "muted");
         printLine("Type 'help' to begin, or 'media' / 'data' to switch context.", "muted");

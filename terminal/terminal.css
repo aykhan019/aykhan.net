@@ -93,13 +93,13 @@ body {
     flex: 1 1 auto;
     overflow-y: auto;
     padding: 14px 16px;
-    white-space: pre-wrap;
-    word-break: break-word;
     scroll-behavior: smooth;
 }
 
 .line {
     margin: 0 0 2px;
+    white-space: pre-wrap;
+    word-break: break-word;
 }
 
 .line.cmd-echo .prompt-echo {
@@ -177,11 +177,11 @@ pre.json {
 
 .banner {
     color: var(--accent);
-    font-weight: 700;
-    font-size: 30px;
-    letter-spacing: 0.5px;
-    line-height: 1.2;
-    margin: 0 0 2px;
+    font-size: 11px;
+    line-height: 1.1;
+    margin: 0 0 6px;
+    overflow-x: auto;
+    white-space: pre;
 }
 
 /* Inline input line — flows flush under the last output line */
@@ -220,5 +220,5 @@ pre.json {
     #command-input { font-size: 13.5px; }
     .bar-title { display: none; }
     .help-cmd { min-width: 96px; }
-    .banner { font-size: 24px; }
+    .banner { font-size: 7px; }
 }
