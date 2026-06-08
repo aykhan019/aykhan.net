@@ -81,7 +81,7 @@
     }
 
     function currentPrompt() {
-        return "guest@" + SERVICES[state.context].label + ":/ $";
+        return "guest@" + SERVICES[state.context].host + ":/ $";
     }
 
     function refreshPrompt() {
@@ -635,16 +635,7 @@
     /* ------------------------------- boot ---------------------------------- */
 
     function banner() {
-        var art = [
-            "  █████  ██    ██ ██   ██ ██   ██  █████  ███    ██",
-            " ██   ██  ██  ██  ██  ██  ██   ██ ██   ██ ████   ██",
-            " ███████   ████   █████   ███████ ███████ ██ ██  ██",
-            " ██   ██    ██    ██  ██  ██   ██ ██   ██ ██  ██ ██",
-            " ██   ██    ██    ██   ██ ██   ██ ██   ██ ██   ████"
-        ];
-        var pre = el("pre", "banner");
-        pre.textContent = art.join("\n");
-        print(pre);
+        print(el("div", "banner", "aykhan.net"));
         printLine("· terminal gateway ·", "muted");
         printLine("Read-only gateway to media.aykhan.net & data.aykhan.net.", "muted");
         printLine("Type 'help' to begin, or 'media' / 'data' to switch context.", "muted");

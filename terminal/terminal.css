@@ -95,6 +95,7 @@ body {
     padding: 14px 16px;
     white-space: pre-wrap;
     word-break: break-word;
+    scroll-behavior: smooth;
 }
 
 .line {
@@ -176,18 +177,18 @@ pre.json {
 
 .banner {
     color: var(--accent);
-    font-weight: 600;
-    line-height: 1.1;
-    margin: 0 0 4px;
-    overflow-x: auto;
-    white-space: pre;
+    font-weight: 700;
+    font-size: 30px;
+    letter-spacing: 0.5px;
+    line-height: 1.2;
+    margin: 0 0 2px;
 }
 
-/* Inline input line — flows right after the output, not pinned to the bottom */
+/* Inline input line — flows flush under the last output line */
 .terminal-input-line {
     display: flex;
     align-items: baseline;
-    margin-top: 2px;
+    margin: 0;
 }
 
 .prompt {
@@ -219,5 +220,5 @@ pre.json {
     #command-input { font-size: 13.5px; }
     .bar-title { display: none; }
     .help-cmd { min-width: 96px; }
-    .banner { font-size: 9px; }
+    .banner { font-size: 24px; }
 }
