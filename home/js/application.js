@@ -5014,3 +5014,9 @@ var Util = function (t) {
         }
     }(jQuery);
 Application.start();
+
+// Force a fresh render when the page is restored from the back/forward cache,
+// so the URL and the displayed UI never go out of sync after a Back navigation.
+window.addEventListener('pageshow', function (e) {
+    if (e.persisted) window.location.reload();
+});
