@@ -198,9 +198,9 @@ searchButton.addEventListener('click', function (event) {
 
 async function getMovieData(title, all = 't') {
     const urls = [
-        `http://www.omdbapi.com/?apikey=d5254632&${all}=${title}&plot=full`,
-        `http://www.omdbapi.com/?apikey=33e21c84&${all}=${title}&plot=full`,
-        `http://www.omdbapi.com/?apikey=ddee1dae&${all}=${title}&plot=full`,
+        `https://www.omdbapi.com/?apikey=d5254632&${all}=${title}&plot=full`,
+        `https://www.omdbapi.com/?apikey=33e21c84&${all}=${title}&plot=full`,
+        `https://www.omdbapi.com/?apikey=ddee1dae&${all}=${title}&plot=full`,
     ];
 
     let resp;
