@@ -1,0 +1,361 @@
+/* ============================================================
+   AYKHAN.NET — SHARED SITE SHELL
+   Same visual language as the landing page (home/css/landing.css),
+   for the inner content pages (notion, sections, etc.).
+   Theme-aware (dark / light). Framework-free.
+   ============================================================ */
+
+/* ---------- Brand + theme tokens ---------- */
+:root {
+  --first-color:  #235aa6;
+  --second-color: #1c1d25;
+  --third-color:  #f3f3f3;
+  --fourth-color: #f06449;
+
+  --maxw: 1180px;
+  --gutter: clamp(1.25rem, 5vw, 5rem);
+  --font-sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+}
+:root,
+:root[data-theme="dark"] {
+  --bg:          #0f1015;
+  --surface:     #15161d;
+  --surface-2:   rgba(243, 243, 243, 0.035);
+  --text:        #e7e8ee;
+  --text-soft:   #9a9cab;
+  --heading:     #ffffff;
+  --line:        rgba(243, 243, 243, 0.10);
+  --card-line:   rgba(243, 243, 243, 0.09);
+  --grid-line:   rgba(243, 243, 243, 0.10);
+  --glow:        rgba(35, 90, 166, 0.42);
+  --nav-bg:      rgba(15, 16, 21, 0.72);
+  --accent-name: #6ea0e6;
+  --shadow:      0 12px 40px -18px rgba(0, 0, 0, 0.8);
+}
+:root[data-theme="light"] {
+  --bg:          #f4f5f7;
+  --surface:     #ffffff;
+  --surface-2:   #ffffff;
+  --text:        #34384a;
+  --text-soft:   #5d6276;
+  --heading:     #1c1d25;
+  --line:        rgba(28, 29, 37, 0.10);
+  --card-line:   rgba(28, 29, 37, 0.10);
+  --grid-line:   rgba(28, 29, 37, 0.055);
+  --glow:        rgba(35, 90, 166, 0.16);
+  --nav-bg:      rgba(244, 245, 247, 0.78);
+  --accent-name: #235aa6;
+  --shadow:      0 14px 40px -22px rgba(28, 29, 37, 0.28);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding-top: 4.5rem; /* clear the fixed nav */
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.wrap {
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* ============================================================
+   NAV  (injected by home/js/shell.js)
+   ============================================================ */
+.site-nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 50;
+  background: var(--nav-bg);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+.site-nav__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  height: 4.5rem;
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-decoration: none;
+  color: var(--heading);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  font-size: 1.05rem;
+}
+.brand img { width: 1.85rem; height: 1.85rem; display: block; }
+
+.nav-right { display: flex; align-items: center; gap: 1.6rem; }
+.nav-links { display: flex; gap: 1.6rem; }
+.nav-links a {
+  color: var(--text-soft);
+  text-decoration: none;
+  font-size: 0.92rem;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+.nav-links a:hover { color: var(--heading); }
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 9px;
+  border: 1px solid var(--card-line);
+  background: var(--surface-2);
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
+}
+.theme-toggle:hover { border-color: var(--first-color); color: var(--first-color); }
+.theme-toggle svg { width: 1.15rem; height: 1.15rem; }
+.theme-toggle .icon-sun { display: none; }
+.theme-toggle .icon-moon { display: block; }
+:root[data-theme="light"] .theme-toggle .icon-sun { display: block; }
+:root[data-theme="light"] .theme-toggle .icon-moon { display: none; }
+
+@media (max-width: 620px) {
+  .nav-links { display: none; }
+}
+
+/* ============================================================
+   PAGE CONTENT  (existing .case-studies markup, restyled)
+   ============================================================ */
+.case-studies {
+  flex: 1 0 auto;
+  padding-top: clamp(2rem, 5vw, 4rem);
+  padding-bottom: clamp(3rem, 6vw, 6rem);
+}
+.section-mask,
+.case-study-reveal-mask { display: none; }
+
+.case-studies .content {
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section-text-mask,
+.section-text-mask-notion { display: block; }
+
+/* list-page kicker */
+.section-subtitle {
+  margin: 0 0 0.6rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--first-color);
+}
+.section-subtitle::before {
+  content: "";
+  width: 1.6rem;
+  height: 1px;
+  background: var(--first-color);
+  display: inline-block;
+}
+.section-title {
+  margin: 0 0 2.2rem;
+  font-size: clamp(1.8rem, 3.4vw, 2.6rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--heading);
+}
+
+/* leaf (iframe) page — subtitle acts as the page title */
+.section-text-mask-notion .section-subtitle {
+  display: block;
+  margin: 0 0 1.4rem;
+  font-family: var(--font-sans);
+  font-size: clamp(1.5rem, 3vw, 2.3rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-transform: none;
+  color: var(--heading);
+}
+.section-text-mask-notion .section-subtitle::before { display: none; }
+
+/* ---------- Link grid (PageLinkDataManager output) ---------- */
+.case-studies-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+  gap: 1rem;
+}
+.case-studies-list li { margin: 0; }
+
+.case-study {
+  position: relative;
+  display: block;
+  min-height: 12rem;
+  padding: 5.5rem 1.4rem 1.4rem;
+  border-radius: 14px;
+  background-color: var(--surface-2);
+  background-repeat: no-repeat;
+  background-position: center 1.4rem;
+  background-size: 3.4rem;
+  border: 1px solid var(--card-line);
+  box-shadow: var(--shadow);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+.case-study:hover {
+  transform: translateY(-4px);
+  border-color: var(--first-color);
+  background-color: rgba(35, 90, 166, 0.07);
+}
+.case-study-mask { display: none; }
+.case-study-mask-number {
+  position: absolute;
+  top: 1.1rem;
+  right: 1.2rem;
+}
+.case-study-mask-front { display: none; }
+.case-study-mask-back {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  color: var(--first-color);
+}
+.case-study-text-section { display: block; }
+.case-study-title {
+  margin: 0;
+  font-size: 1.18rem;
+  font-weight: 600;
+  color: var(--heading);
+}
+.case-study-subtitle {
+  margin: 0.4rem 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  color: var(--text-soft);
+}
+.case-study .the-button.call-to-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 0.9rem;
+  padding: 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.04em;
+  color: var(--first-color);
+}
+.case-study .button-mask { display: none; }
+.case-study .button-icon svg {
+  width: 0.95rem;
+  height: 0.95rem;
+  fill: currentColor;
+  transition: transform 0.18s ease;
+}
+.case-study:hover .button-icon svg { transform: translateX(3px); }
+
+/* ---------- Embedded notion content ---------- */
+.iframe-container {
+  margin-top: 0.5rem;
+  border: 1px solid var(--card-line);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+.iframe-container iframe {
+  display: block;
+  width: 100%;
+  min-height: 82vh;
+  border: 0;
+  background: #fff;
+}
+
+/* ============================================================
+   FOOTER  (injected by home/js/shell.js)
+   ============================================================ */
+.site-footer {
+  flex-shrink: 0;
+  border-top: 1px solid var(--line);
+  padding: 2.2rem 0;
+}
+.site-footer__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.site-footer .brand { font-size: 0.98rem; }
+.contact__links { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 1.1rem;
+  border-radius: 10px;
+  border: 1px solid var(--card-line);
+  background: transparent;
+  color: var(--text);
+  font: 600 0.9rem var(--font-sans);
+  text-decoration: none;
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+.btn:hover {
+  border-color: var(--first-color);
+  background: var(--surface-2);
+  transform: translateY(-2px);
+}
+.site-footer__note {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-soft);
+}
+
+/* standalone call-to-action button (e.g. "Back to home" on placeholder pages) */
+.the-button.call-to-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.3rem;
+  border-radius: 10px;
+  background: var(--first-color);
+  color: #fff;
+  font: 600 0.95rem var(--font-sans);
+  text-decoration: none;
+  transition: transform 0.18s ease, background 0.18s ease;
+}
+.the-button.call-to-button:hover { background: #2b6bc2; transform: translateY(-2px); }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .btn, .case-study, .theme-toggle, .case-study .button-icon svg { transition: none; }
+}
