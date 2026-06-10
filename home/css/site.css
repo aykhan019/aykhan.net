@@ -404,6 +404,9 @@ body {
   transition: transform 0.18s ease, background 0.18s ease;
 }
 .the-button.call-to-button:hover { background: #2b6bc2; transform: translateY(-2px); }
+.case-study .the-button.call-to-button:hover {
+  background: none;
+}
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

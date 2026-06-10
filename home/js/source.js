@@ -40,6 +40,20 @@
     return url.replace(/["'()\\\s<>]/g, encodeURIComponent);
   }
 
+  function localizeSiteUrl(value) {
+    var url = String(value == null ? '' : value).trim();
+    if (!url) return '';
+
+    try {
+      var parsed = new URL(url, window.location.href);
+      if (parsed.hostname === 'aykhan.net' || parsed.hostname === 'www.aykhan.net') {
+        return parsed.pathname + parsed.search + parsed.hash;
+      }
+    } catch (e) {}
+
+    return url;
+  }
+
   function padIndex(id) {
     var n = Number(id);
     if (!isFinite(n) || n < 0) return '000';
@@ -54,7 +68,7 @@
   function cardHtml(item) {
     return (
       '<li itemscope itemtype="http://schema.org/CreativeWork">' +
-        '<a class="case-study" itemprop="url" href="' + safeUrl(item.linkUrl) + '">' +
+        '<a class="case-study" itemprop="url" href="' + safeUrl(localizeSiteUrl(item.linkUrl)) + '">' +
           '<div class="case-study-media" style="background-image: url(\'' + safeUrl(item.imageUrl) + '\');"></div>' +
           '<div class="case-study-mask-number"><span class="case-study-mask-back">' + padIndex(item.id) + '</span></div>' +
           '<div class="case-study-text-section">' +
