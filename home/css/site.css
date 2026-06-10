@@ -307,6 +307,19 @@ body {
 }
 .case-study:hover .button-icon svg { transform: translateX(3px); }
 
+.cards-error {
+  grid-column: 1 / -1;
+  list-style: none;
+  padding: 1.4rem 1.6rem;
+  border-radius: 14px;
+  border: 1px solid var(--card-line);
+  background: var(--surface-2);
+  color: var(--text-soft);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
 /* ---------- Embedded notion content ---------- */
 .iframe-container {
   margin-top: 0.5rem;
