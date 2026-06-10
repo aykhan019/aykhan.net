@@ -10,6 +10,11 @@
      2) Imperative (kept for backward compatibility):
           new PageLinkDataManager('<json url>').addPageLinkItems()
 
+   Resilience:
+     - Cache-first paint from localStorage so repeat visits are instant and
+       the page still renders if data.aykhan.net is unreachable.
+     - A skeleton placeholder fills empty lists on first load (no layout shift).
+
    metadata.json shape:
      { "<container-id>": [ { id, title, description, imageUrl, linkUrl }, ... ] }
    The single top-level key must match the target <ul id> (imperative mode)
@@ -65,6 +70,11 @@
     );
   }
 
+  function skeletonHtml(count) {
+    var li = '<li class="case-study case-study--skeleton" aria-hidden="true"></li>';
+    return new Array(count + 1).join(li);
+  }
+
   function renderError(container, message) {
     if (!container) return;
     container.innerHTML = '<li class="cards-error" role="alert">' + escapeHtml(message) + '</li>';
@@ -78,21 +88,49 @@
     container.innerHTML = items.map(cardHtml).join('');
   }
 
-  // Fetch one section's JSON and render it into `el` (or the element whose
-  // id matches the JSON's top-level key, for the legacy imperative path).
+  // ---- localStorage cache (best-effort; never throws) ----
+  function cacheGet(url) {
+    try {
+      var raw = localStorage.getItem('cards:' + url);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) { return null; }
+  }
+  function cacheSet(url, data) {
+    try { localStorage.setItem('cards:' + url, JSON.stringify(data)); } catch (e) {}
+  }
+
+  // Resolve the target <ul> and its items from a parsed payload.
+  function resolve(el, data) {
+    var key = Object.keys(data)[0];
+    return { key: key, container: el || document.getElementById(key), items: data[key] };
+  }
+
   async function renderSection(url, el) {
-    var container = el;
+    // 1) Instant paint from cache, if we have it.
+    var painted = false;
+    var cached = cacheGet(url);
+    if (cached) {
+      var rc = resolve(el, cached);
+      if (rc.container) { renderCards(rc.container, rc.items); painted = true; }
+    } else if (el && el.children.length === 0) {
+      el.innerHTML = skeletonHtml(6);
+    }
+
+    // 2) Revalidate from the network.
     try {
       var res = await fetch(url);
       if (!res.ok) throw new Error('HTTP ' + res.status);
       var data = await res.json();
-      var key = Object.keys(data)[0];
-      container = el || document.getElementById(key);
-      if (!container) throw new Error('No matching <ul> for data key "' + key + '"');
-      renderCards(container, data[key]);
+      cacheSet(url, data);
+      var rr = resolve(el, data);
+      if (!rr.container) throw new Error('No matching <ul> for data key "' + rr.key + '"');
+      renderCards(rr.container, rr.items);
     } catch (err) {
       console.error('[cards] failed to load', url, err);
-      renderError(container, 'Could not load this section.');
+      if (!painted) {
+        var fallback = el || (cached && document.getElementById(Object.keys(cached)[0]));
+        renderError(fallback, 'Could not load this section.');
+      }
     }
   }
 
@@ -105,8 +143,11 @@
   };
   window.PageLinkDataManager = PageLinkDataManager;
 
-  // ---- Declarative auto-init for future pages ----
+  // ---- On load: skeleton any still-empty lists, then auto-init declarative ones ----
   document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.case-studies-list').forEach(function (ul) {
+      if (ul.children.length === 0) ul.innerHTML = skeletonHtml(6);
+    });
     document.querySelectorAll('.case-studies-list[data-source]').forEach(function (ul) {
       renderSection(ul.getAttribute('data-source'), ul);
     });

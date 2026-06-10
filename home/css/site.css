@@ -145,8 +145,7 @@ body {
   padding-top: clamp(2rem, 5vw, 4rem);
   padding-bottom: clamp(3rem, 6vw, 6rem);
 }
-.section-mask,
-.case-study-reveal-mask { display: none; }
+.section-mask { display: none; }
 
 .case-studies .content {
   width: 100%;
@@ -237,7 +236,6 @@ body {
   border-color: var(--first-color);
   background-color: rgba(35, 90, 166, 0.07);
 }
-.case-study-mask { display: none; }
 .case-study-mask-number {
   position: absolute;
   top: 0.9rem;
@@ -248,7 +246,6 @@ body {
   background: rgba(0, 0, 0, 0.55);
   backdrop-filter: blur(2px);
 }
-.case-study-mask-front { display: none; }
 .case-study-mask-back {
   font-family: var(--font-mono);
   font-size: 0.8rem;
@@ -298,7 +295,6 @@ body {
   letter-spacing: 0.04em;
   color: var(--first-color);
 }
-.case-study .button-mask { display: none; }
 .case-study .button-icon svg {
   width: 0.95rem;
   height: 0.95rem;
@@ -318,6 +314,22 @@ body {
   font-family: var(--font-mono);
   font-size: 0.85rem;
   text-align: center;
+}
+
+.case-study--skeleton {
+  min-height: 18rem;
+  border: 1px solid var(--card-line);
+  border-radius: 14px;
+  background-image: linear-gradient(100deg, var(--surface-2) 30%, var(--line) 50%, var(--surface-2) 70%);
+  background-size: 200% 100%;
+  animation: cards-shimmer 1.2s ease-in-out infinite;
+}
+@keyframes cards-shimmer {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .case-study--skeleton { animation: none; }
 }
 
 /* ---------- Embedded notion content ---------- */
