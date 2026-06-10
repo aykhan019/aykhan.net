@@ -51,8 +51,9 @@ class PageLinkDataManager {
         }
         let content = `
             <li itemscope itemtype="http://schema.org/CreativeWork">
-                <a href="${pageLinkItem.pageLink}" style="background-image: url('${pageLinkItem.imageUrl}');"
+                <a href="${pageLinkItem.pageLink}"
                     data-destination="cerasa" itemprop="url" class="case-study">
+                    <div class="case-study-media" style="background-image: url('${pageLinkItem.imageUrl}');"></div>
                     <div class="case-study-mask"></div>
                     <div class="case-study-reveal-mask"></div>
                     <div class="case-study-mask-number">
