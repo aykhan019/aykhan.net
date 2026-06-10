@@ -1,0 +1,86 @@
+---
+
+1. **Publish Notion Page:**
+   - Publish your Notion page to make it publicly accessible.
+
+2. **Get URL:**
+   - Copy the URL of the published Notion page.
+
+3. **Export HTML:**
+   - Use Notion’s export feature to export the page as HTML.
+
+4. **Save HTML File:**
+   - Update HTML File if needed
+   - Save the exported HTML file to the `media.aykhan.net/notion-pages` folder.
+   - Name the file appropriately based on the content (e.g., `module-1.html`).
+
+5. **Embed in Website:**
+   - Embed the static HTML file in the desired location on your website using the URL from `media.aykhan.net/notion-pages`.
+   - Use the following code template for embedding:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Title</title>
+    <meta name="description"
+        content="Your Title">
+    <link rel="icon" type="image/x-icon"
+        href="https://res.cloudinary.com/dbriqxpaa/image/upload/v1680096853/Logo/logo-xl-ico_qzbf7d.ico" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <link rel="stylesheet" href="../../../../../home/css/application.css">
+    <link rel="stylesheet" href="../../../../../home/css/variables.css">
+    <link rel="stylesheet" href="../../../../css/style.css">
+</head>
+
+<body>
+    <section class="case-studies" itemscope itemprop="mainContentOfPage" class="case-studies-section"
+        style="width:100%;padding: 2% 0%;">
+        <div class="section-mask"></div>
+        <div class="content">
+            <div class="section-text-mask">
+                <h4 class="h5 section-subtitle">Machine Learning with Python</h4>
+            </div>
+            <div class="section-text-mask">
+                <h2 class="h3 section-title">Module 1: Introduction to Machine Learning</h2>
+            </div>
+            <div class="iframe-container">
+
+                <iframe id="iframeContent"
+                    src="path/to/source"></iframe>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>
+```
+
+   - Update the `src` attribute in the `<iframe>` tag with the path to your saved HTML file (e.g., `/notion-pages/module-1.html`).
+
+**Note:**
+- Ensure that the published Notion page is locked to prevent unauthorized changes.
+- Update the static HTML files in `media.aykhan.net/notion-pages` if there are any changes to the original Notion pages.
+- In the future, page updates may be automated using Notion API and GitHub Actions.
+- Add the following CSS to the downloaded HTML page to customize the scrollbar for Edge:
+
+```css
+/* For Edge (based on WebKit) */
+::-webkit-scrollbar {
+    width: 7px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+}
+```
+
+---

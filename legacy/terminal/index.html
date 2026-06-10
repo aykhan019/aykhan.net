@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Aykhan Terminal Gateway</title>
+    <meta name="description"
+        content="A read-only terminal gateway that indexes and explores Aykhan's public media and data services.">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="msapplication-tap-highlight" content="no">
+    <link rel="icon" type="image/x-icon"
+        href="https://res.cloudinary.com/dbriqxpaa/image/upload/v1680096853/Logo/logo-xl-ico_qzbf7d.ico" />
+    <link rel="stylesheet" href="terminal.css">
+</head>
+
+<body>
+    <main class="terminal" id="terminal" aria-label="Aykhan Terminal Gateway">
+        <div class="terminal-bar">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+            <span class="bar-title">Aykhan Terminal Gateway</span>
+            <a class="bar-home" href="/legacy" title="Back to aykhan.net">aykhan.net</a>
+        </div>
+
+        <div class="terminal-screen" id="screen" aria-live="polite">
+            <div id="output"></div>
+            <form class="terminal-input-line" id="input-line" autocomplete="off">
+                <span class="prompt" id="prompt">guest@aykhan.net &gt;</span>
+                <input type="text" id="command-input" name="command" aria-label="Terminal command input"
+                    autocapitalize="off" autocorrect="off" spellcheck="false" autofocus>
+            </form>
+        </div>
+    </main>
+
+    <script src="terminal.js"></script>
+</body>
+
+</html>

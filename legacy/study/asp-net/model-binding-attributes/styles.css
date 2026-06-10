@@ -1,0 +1,70 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  h1 {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .attribute-info {
+    margin-bottom: 40px;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 5px;
+  }
+  
+  h2 {
+    color: #007bff;
+    margin-bottom: 10px;
+  }
+  
+  p {
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+  
+  pre {
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    overflow-x: auto;
+  }
+  
+  code {
+    display: block;
+    padding: 10px;
+  }
+  
+  /* Syntax highlighting for C# code */
+  .highlight {
+    font-family: Consolas, monospace;
+    font-size: 14px;
+    white-space: pre-wrap;
+    tab-size: 4;
+    line-height: 1.5;
+    color: #333;
+    background-color: #f8f9fa;
+  }
+  
+  .highlight .keyword {
+    color: #007bff;
+  }
+  
+  .highlight .comment {
+    color: #6c757d;
+  }
+  
+  .highlight .string {
+    color: #e83e8c;
+  }
+  
