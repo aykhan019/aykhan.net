@@ -10,6 +10,35 @@ Welcome to **Aykhan.net**! This GitHub repository serves as my personal e-portfo
 
 Visit [aykhan.net](https://aykhan.net) to view the live version of my portfolio and explore my work.
 
+## Static head build
+
+Pages that use the new shell (`home/css/site.css`) get their shared `<head>`
+from [`tools/head.html`](./tools/head.html). The build keeps each page's
+existing `<title>` and `<meta name="description">`, then rewrites the rest of
+the head from the shared partial.
+
+```bash
+pnpm build
+```
+
+Use `pnpm build:check` to verify the committed HTML is already up to date.
+
+The generated pages are committed in place, so GitHub Pages can still serve the
+repository root directly. Shared assets in the generated head use root-absolute
+URLs such as `/home/css/site.css`; test locally with an HTTP server instead of
+opening files with `file://`:
+
+```bash
+python3 -m http.server
+```
+
+Then open `http://localhost:8000/`.
+
+To add a new-shell page, copy an existing generated page, update only its
+page-specific title, description, and body content, then run `pnpm build`.
+The build intentionally skips `legacy/`, `github/overview.html`, old-template
+pages that use `home/css/application.css`, and pages with FontAwesome markers.
+
 ## Aykhan Terminal Gateway
 
 A read-only, terminal-style interface that indexes and explores my public services.

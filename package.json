@@ -1,0 +1,8 @@
+{
+  "name": "aykhan-net",
+  "private": true,
+  "scripts": {
+    "build": "node tools/build-heads.js",
+    "build:check": "node tools/build-heads.js --check"
+  }
+}
