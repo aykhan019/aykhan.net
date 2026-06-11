@@ -1,17 +1,17 @@
 const imageLinks = [
-    "http://res.cloudinary.com/dbriqxpaa/image/upload/v1/java-script/task4/img12_q8kva7",
-    "http://res.cloudinary.com/dbriqxpaa/image/upload/v1/java-script/task4/img9_lzhasd",
-    "http://res.cloudinary.com/dbriqxpaa/image/upload/v1/java-script/task4/img4_jqq7dt",
-    "http://res.cloudinary.com/dbriqxpaa/image/upload/v1/java-script/task4/img8_byxddu",
-    "http://res.cloudinary.com/dbriqxpaa/image/upload/v1/java-script/task4/img6_he77n6",
-    "http://res.cloudinary.com/dbriqxpaa/image/upload/v1/java-script/task4/img1_qfug4c",
-    "http://res.cloudinary.com/dbriqxpaa/image/upload/v1/java-script/task4/img7_nr0z0t",
-    "http://res.cloudinary.com/dbriqxpaa/image/upload/v1/java-script/task4/img2_fzctwn",
-    "http://res.cloudinary.com/dbriqxpaa/image/upload/v1/java-script/task4/img10_axtob1",
-    "http://res.cloudinary.com/dbriqxpaa/image/upload/v1/java-script/task4/img4_kidw9c",
-    "http://res.cloudinary.com/dbriqxpaa/image/upload/v1/java-script/task4/img5_mnqzsp",
-    "http://res.cloudinary.com/dbriqxpaa/image/upload/v1/java-script/task4/img11_fzoqnb",
-    "http://res.cloudinary.com/dbriqxpaa/image/upload/v1/java-script/task4/img13_oep4ao"
+    "https://res.cloudinary.com/dbriqxpaa/image/upload/v1/java-script/task4/img12_q8kva7",
+    "https://res.cloudinary.com/dbriqxpaa/image/upload/v1/java-script/task4/img9_lzhasd",
+    "https://res.cloudinary.com/dbriqxpaa/image/upload/v1/java-script/task4/img4_jqq7dt",
+    "https://res.cloudinary.com/dbriqxpaa/image/upload/v1/java-script/task4/img8_byxddu",
+    "https://res.cloudinary.com/dbriqxpaa/image/upload/v1/java-script/task4/img6_he77n6",
+    "https://res.cloudinary.com/dbriqxpaa/image/upload/v1/java-script/task4/img1_qfug4c",
+    "https://res.cloudinary.com/dbriqxpaa/image/upload/v1/java-script/task4/img7_nr0z0t",
+    "https://res.cloudinary.com/dbriqxpaa/image/upload/v1/java-script/task4/img2_fzctwn",
+    "https://res.cloudinary.com/dbriqxpaa/image/upload/v1/java-script/task4/img10_axtob1",
+    "https://res.cloudinary.com/dbriqxpaa/image/upload/v1/java-script/task4/img4_kidw9c",
+    "https://res.cloudinary.com/dbriqxpaa/image/upload/v1/java-script/task4/img5_mnqzsp",
+    "https://res.cloudinary.com/dbriqxpaa/image/upload/v1/java-script/task4/img11_fzoqnb",
+    "https://res.cloudinary.com/dbriqxpaa/image/upload/v1/java-script/task4/img13_oep4ao"
 ];
 
 document.addEventListener("touchstart", function () { }, true);
