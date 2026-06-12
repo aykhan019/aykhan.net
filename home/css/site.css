@@ -1,5 +1,5 @@
 /* ============================================================
-   AYKHAN.NET — SHARED SITE SHELL
+   AYKHAN.NET - SHARED SITE SHELL
    Same visual language as the landing page (home/css/landing.css),
    for the inner content pages (notion, sections, etc.).
    Theme-aware (dark / light). Framework-free.
@@ -154,8 +154,7 @@ body {
   padding-inline: var(--gutter);
 }
 
-.section-text-mask,
-.section-text-mask-notion { display: block; }
+.section-text-mask { display: block; }
 
 /* list-page kicker */
 .section-subtitle {
@@ -184,19 +183,6 @@ body {
   letter-spacing: -0.02em;
   color: var(--heading);
 }
-
-/* leaf (iframe) page — subtitle acts as the page title */
-.section-text-mask-notion .section-subtitle {
-  display: block;
-  margin: 0 0 1.4rem;
-  font-family: var(--font-sans);
-  font-size: clamp(1.5rem, 3vw, 2.3rem);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  text-transform: none;
-  color: var(--heading);
-}
-.section-text-mask-notion .section-subtitle::before { display: none; }
 
 /* ---------- Link grid (PageLinkDataManager output) ---------- */
 .case-studies-list {
@@ -332,21 +318,21 @@ body {
   .case-study--skeleton { animation: none; }
 }
 
-/* ---------- Embedded notion content ---------- */
+/* ---------- Embedded notion content ----------
+   The note is fetched and rendered inline inside a Shadow DOM by
+   home/js/shell.js (the #iframeContent element carries the note URL). It reads
+   as ordinary page content: one scrollbar, full height, theme-aware colours. */
 .iframe-container {
-  margin-top: 0.5rem;
-  border: 1px solid var(--card-line);
-  border-radius: 14px;
-  overflow: hidden;
-  background: var(--surface);
-  box-shadow: var(--shadow);
+  margin-top: 0;
+  background: transparent;
 }
-.iframe-container iframe {
+.notion-note {
   display: block;
-  width: 100%;
-  min-height: 82vh;
-  border: 0;
-  background: #fff;
+}
+/* Lesson pages lead with the note's cover image, so drop the section's
+   decorative top gap (body already pads 4.5rem to clear the fixed nav). */
+.case-studies:has(.iframe-container) {
+  padding-top: 0;
 }
 
 /* ============================================================
