@@ -1,5 +1,5 @@
 /* ============================================================
-   AYKHAN.NET — CARD LIST RENDERER
+   AYKHAN.NET - CARD LIST RENDERER
    Fetches a section's metadata.json and renders link cards into a
    matching <ul class="case-studies-list">. Vanilla JS, no dependencies.
 

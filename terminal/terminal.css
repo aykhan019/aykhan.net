@@ -250,7 +250,7 @@ pre.json {
     white-space: pre;
 }
 
-/* Inline input line — flows flush under the last output line */
+/* Inline input line - flows flush under the last output line */
 .terminal-input-line {
     display: flex;
     align-items: baseline;

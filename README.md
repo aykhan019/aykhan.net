@@ -49,9 +49,9 @@ Open it at **[aykhan.net/terminal](https://aykhan.net/terminal)** (source under 
 The gateway is a single-page, vanilla HTML/CSS/JS terminal. It can switch context
 between three services and read the public static JSON indexes each one publishes:
 
-- `aykhan` — this portfolio
-- `media` — [media.aykhan.net](https://media.aykhan.net) public media files
-- `data` — [data.aykhan.net](https://data.aykhan.net) public JSON endpoints
+- `aykhan` - this portfolio
+- `media` - [media.aykhan.net](https://media.aykhan.net) public media files
+- `data` - [data.aykhan.net](https://data.aykhan.net) public JSON endpoints
 
 It fetches **only** four static, public files:
 
@@ -81,7 +81,7 @@ so anything it can reach is already public. This keeps the surface safe by defau
 
 Scripting and automation (the index generators), static data indexing and data
 workflows, public API/data exploration, clean keyboard-driven frontend UX, and
-security awareness (read-only, whitelist-based, public-metadata-only) — all
+security awareness (read-only, whitelist-based, public-metadata-only) - all
 inspectable in the open repositories.
 
 ## License

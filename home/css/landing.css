@@ -1,5 +1,5 @@
 /* ============================================================
-   AYKHAN.NET — LANDING PAGE
+   AYKHAN.NET - LANDING PAGE
    Theme-aware (dark / light). Scoped, framework-free.
    ============================================================ */
 
@@ -428,7 +428,7 @@ body {
 .hero-frame__mark.bl { bottom: 0; left: 0; border-right: 0; border-top: 0; }
 .hero-frame__mark.br { bottom: 0; right: 0; border-left: 0; border-top: 0; }
 
-/* dimension tick labels — one on each side */
+/* dimension tick labels - one on each side */
 .hero-frame__dim {
   position: absolute;
   font-family: var(--font-mono);

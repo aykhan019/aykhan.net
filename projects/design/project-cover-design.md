@@ -5,7 +5,7 @@ This new cover must match the existing project-cover visual system exactly. It s
 Do not make a primitive centered icon. Create a rich hero-style composition with:
 
 * 1 clear main subject
-* 2–4 supporting visual elements
+* 2-4 supporting visual elements
 * subtle UI/card/grid/technical details where useful
 * soft glow, mild shadows, and clean highlights
 
@@ -34,4 +34,4 @@ Rules:
 New project:
 Project name: [PROJECT NAME]
 Subject: [MAIN SUBJECT]
-Visual concept: [MAIN SUBJECT + 2–4 SUPPORTING ELEMENTS]
+Visual concept: [MAIN SUBJECT + 2-4 SUPPORTING ELEMENTS]
