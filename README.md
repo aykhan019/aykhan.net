@@ -67,33 +67,10 @@ python3 -m http.server   # then open http://localhost:8000/
 
 ## The Terminal Gateway
 
-The gateway ([`/terminal`](./terminal)) is the integration point of the whole system. It
-switches between three **services** and fetches **only four** static, public files:
-
-```
-media.aykhan.net/media-index.json   media.aykhan.net/build-report.json
-data.aykhan.net/data-index.json     data.aykhan.net/build-report.json
-```
-
-…plus the individual public files those indexes reference. Service URLs and the colour
-themes are declared at the top of [`terminal/terminal.js`](./terminal/terminal.js).
-
-> **The terminal — and every site in this system — is strictly read‑only.** There are no
-> write, upload, edit, delete, commit, or authentication features anywhere, and no tokens
-> or secrets are ever used. Everything indexed into JSON is public by design.
-
-## Static head build
-
-Pages on the new shell stylesheet (`home/css/site.css`) share their `<head>` from
-[`tools/head.html`](./tools/head.html) (with `{{TITLE}}` / `{{DESCRIPTION}}` placeholders).
-[`tools/build-heads.js`](./tools/build-heads.js) walks every `.html`, keeps each page's own
-`<title>` and `<meta name="description">`, and rewrites the rest from the partial. Generated
-pages are committed in place so Pages serves them directly.
-
-The walk intentionally skips `legacy/`, `node_modules/`, `tools/`, `github/overview.html`,
-pages still on the old `home/css/application.css`, and any page containing FontAwesome
-markers. To add a new shell page, copy an existing generated page, change only its title,
-description, and body, then run `pnpm build`.
+The standout feature: a single‑page, vanilla‑JS terminal at [`/terminal`](./terminal) that
+switches between the three services and browses their public JSON indexes — strictly
+read‑only, with no backend, tokens, or auth. Service URLs and colour themes are declared at
+the top of [`terminal/terminal.js`](./terminal/terminal.js).
 
 ## Project structure
 
