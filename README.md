@@ -1,91 +1,115 @@
-# Aykhan.net - Personal E-Portfolio
-
 <div align="center">
-  <img src="https://media.aykhan.net/assets/logos/aykhannet.ico" alt="Aykhan.net Logo" width="150">
+
+<img src="https://media.aykhan.net/assets/logos/aykhannet.ico" alt="aykhan.net logo" width="120" />
+
+# aykhan.net
+
+**Personal e‑portfolio and the Terminal Gateway that ties together a three‑domain static system.**
+
+[![Live](https://img.shields.io/badge/live-aykhan.net-235aa6?style=flat-square)](https://aykhan.net)
+[![Terminal](https://img.shields.io/badge/try-/terminal-1c1d25?style=flat-square)](https://aykhan.net/terminal)
+[![Deploy](https://img.shields.io/badge/hosting-GitHub%20Pages-222?style=flat-square&logo=github)](https://pages.github.com)
+[![Stack](https://img.shields.io/badge/stack-vanilla%20HTML%2FCSS%2FJS-f06449?style=flat-square)](#tech-stack)
+[![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](./LICENSE)
+
 </div>
 
-Welcome to **Aykhan.net**! This GitHub repository serves as my personal e-portfolio, showcasing a collection of programming tasks, projects, and accomplishments.
+---
 
-## Explore
+## Overview
 
-Visit [aykhan.net](https://aykhan.net) to view the live version of my portfolio and explore my work.
+`aykhan.net` is the flagship repository of a small constellation of three independent,
+statically‑hosted sites, each deployed to GitHub Pages on its own domain:
+
+| Domain | Repository | Role |
+| --- | --- | --- |
+| [aykhan.net](https://aykhan.net) | **this repo** | E‑portfolio + **Terminal Gateway** |
+| [media.aykhan.net](https://media.aykhan.net) | `media.aykhan.net` | Public media host + `media-index.json` |
+| [data.aykhan.net](https://data.aykhan.net) | `data.aykhan.net` | Static JSON "API" + `data-index.json` |
+
+The site is built from **plain, framework‑free HTML/CSS/JS** so GitHub Pages can serve the
+repository root directly — no server runtime, no build step required to view a page.
+
+## Highlights
+
+- **Terminal Gateway** — a single‑page, vanilla‑JS terminal at [`/terminal`](./terminal)
+  that browses the public services and their static JSON indexes.
+- **Shared `<head>` build** — a tiny Node tool keeps the `<head>` of every shell page in
+  sync from one partial, while preserving each page's own title and description.
+- **Read‑only by design** — no uploads, no auth, no API keys, no secrets. Everything the
+  site exposes is public static content.
+- **Theme‑aware** — light/dark theming driven by CSS variables, set before first paint.
+
+## Tech stack
+
+| Concern | Choice |
+| --- | --- |
+| Markup / styles / behaviour | Vanilla HTML, CSS (custom properties), ES (no framework) |
+| Tooling | Node + [pnpm](https://pnpm.io) for the head build only |
+| Hosting | GitHub Pages (`master` → `aykhan.net` via `CNAME`) |
+| Fonts | IBM Plex Sans / IBM Plex Mono |
+
+## Getting started
+
+```bash
+# Install dev tooling (only needed for the head build)
+pnpm install
+
+# Regenerate the shared <head> across all shell pages (writes in place)
+pnpm build
+
+# CI-style check that committed heads are already up to date (exits 1 if stale)
+pnpm build:check
+
+# Preview locally — root-absolute asset URLs require HTTP, not file://
+python3 -m http.server   # then open http://localhost:8000/
+```
+
+## The Terminal Gateway
+
+The gateway ([`/terminal`](./terminal)) is the integration point of the whole system. It
+switches between three **services** and fetches **only four** static, public files:
+
+```
+media.aykhan.net/media-index.json   media.aykhan.net/build-report.json
+data.aykhan.net/data-index.json     data.aykhan.net/build-report.json
+```
+
+…plus the individual public files those indexes reference. Service URLs and the colour
+themes are declared at the top of [`terminal/terminal.js`](./terminal/terminal.js).
+
+> **The terminal — and every site in this system — is strictly read‑only.** There are no
+> write, upload, edit, delete, commit, or authentication features anywhere, and no tokens
+> or secrets are ever used. Everything indexed into JSON is public by design.
 
 ## Static head build
 
-Pages that use the new shell (`home/css/site.css`) get their shared `<head>`
-from [`tools/head.html`](./tools/head.html). The build keeps each page's
-existing `<title>` and `<meta name="description">`, then rewrites the rest of
-the head from the shared partial.
+Pages on the new shell stylesheet (`home/css/site.css`) share their `<head>` from
+[`tools/head.html`](./tools/head.html) (with `{{TITLE}}` / `{{DESCRIPTION}}` placeholders).
+[`tools/build-heads.js`](./tools/build-heads.js) walks every `.html`, keeps each page's own
+`<title>` and `<meta name="description">`, and rewrites the rest from the partial. Generated
+pages are committed in place so Pages serves them directly.
 
-```bash
-pnpm build
+The walk intentionally skips `legacy/`, `node_modules/`, `tools/`, `github/overview.html`,
+pages still on the old `home/css/application.css`, and any page containing FontAwesome
+markers. To add a new shell page, copy an existing generated page, change only its title,
+description, and body, then run `pnpm build`.
+
+## Project structure
+
 ```
-
-Use `pnpm build:check` to verify the committed HTML is already up to date.
-
-The generated pages are committed in place, so GitHub Pages can still serve the
-repository root directly. Shared assets in the generated head use root-absolute
-URLs such as `/home/css/site.css`; test locally with an HTTP server instead of
-opening files with `file://`:
-
-```bash
-python3 -m http.server
+aykhan.net/
+├── index.html              # Landing page
+├── terminal/               # Terminal Gateway (single-page vanilla JS)
+├── home/                   # Shared CSS / JS / images (site.css, landing.css, shell.js)
+├── tools/                  # build-heads.js + head.html partial
+├── projects/  books/  notion/  cyber-security/  piano/  …   # Section pages
+├── achievements/           # Certificates & badges
+├── legacy/                 # Older pages (not part of the head build)
+├── CNAME                   # aykhan.net
+└── package.json            # pnpm scripts: build, build:check
 ```
-
-Then open `http://localhost:8000/`.
-
-To add a new-shell page, copy an existing generated page, update only its
-page-specific title, description, and body content, then run `pnpm build`.
-The build intentionally skips `legacy/`, `github/overview.html`, old-template
-pages that use `home/css/application.css`, and pages with FontAwesome markers.
-
-## Aykhan Terminal Gateway
-
-A read-only, terminal-style interface that indexes and explores my public services.
-Open it at **[aykhan.net/terminal](https://aykhan.net/terminal)** (source under [`/terminal`](./terminal)).
-
-### What it is
-
-The gateway is a single-page, vanilla HTML/CSS/JS terminal. It can switch context
-between three services and read the public static JSON indexes each one publishes:
-
-- `aykhan` - this portfolio
-- `media` - [media.aykhan.net](https://media.aykhan.net) public media files
-- `data` - [data.aykhan.net](https://data.aykhan.net) public JSON endpoints
-
-It fetches **only** four static, public files:
-
-- `https://media.aykhan.net/media-index.json` and `/build-report.json`
-- `https://data.aykhan.net/data-index.json` and `/build-report.json`
-
-…plus the individual public media/JSON files those indexes reference.
-
-### Commands
-
-| Scope | Commands |
-| --- | --- |
-| General | `help` · `about` · `repo` · `stats` · `unicourse` · `home` · `media` · `data` · `clear` |
-| Media | `ls` · `tree` · `find <query>` · `preview <path>` · `copy <path>` |
-| Data | `endpoints` · `cat <endpoint>` · `pretty <endpoint>` · `find <query>` · `copy <endpoint>` |
-
-Use ↑/↓ to navigate command history.
-
-### Why it is read-only
-
-The terminal performs **no** writes of any kind: no uploads, create/edit/delete,
-save, commit/push, GitHub API calls, or authentication. It reads only the public
-JSON indexes above (generated by whitelist-based scripts in the media/data repos),
-so anything it can reach is already public. This keeps the surface safe by default.
-
-### Why it demonstrates product-engineering skills
-
-Scripting and automation (the index generators), static data indexing and data
-workflows, public API/data exploration, clean keyboard-driven frontend UX, and
-security awareness (read-only, whitelist-based, public-metadata-only) - all
-inspectable in the open repositories.
 
 ## License
 
-This repository is licensed under the [MIT License](LICENSE).
-
----
+Released under the [MIT License](./LICENSE) © 2023 Aykhan Ahmadzada.
