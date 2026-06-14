@@ -197,6 +197,21 @@ body {
   color: var(--heading);
 }
 
+/* ---------- Page note / callout ---------- */
+.page-note {
+  margin: 0 0 1.8rem;
+  padding: 0.85rem 1.1rem;
+  border-radius: 12px;
+  border: 1px solid var(--card-line);
+  border-left: 3px solid var(--first-color);
+  background: var(--surface-2);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+  color: var(--text-soft);
+}
+
 /* ---------- Link grid (PageLinkDataManager output) ---------- */
 .case-studies-list {
   list-style: none;
