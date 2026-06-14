@@ -103,7 +103,20 @@ body {
   letter-spacing: -0.01em;
   font-size: 1.05rem;
 }
-.brand img { width: 1.85rem; height: 1.85rem; display: block; }
+.brand__logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 10px;
+  border: 1px solid var(--card-line);
+  background: var(--surface-2);
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+.brand img { width: 1.55rem; height: 1.55rem; display: block; }
+.brand:hover .brand__logo { border-color: var(--first-color); background: rgba(35, 90, 166, 0.07); }
+.brand__tld { color: var(--first-color); }
 
 .nav-right { display: flex; align-items: center; gap: 1.6rem; }
 .nav-links { display: flex; gap: 1.6rem; }

@@ -17,8 +17,8 @@
   nav.innerHTML =
     '<div class="wrap site-nav__inner">' +
       '<a class="brand" href="' + home + '">' +
-        '<img src="' + logo + '" alt="Aykhan Ahmadzada logo" />' +
-        '<span>aykhan.net</span>' +
+        '<span class="brand__logo"><img src="' + logo + '" alt="Aykhan Ahmadzada logo" /></span>' +
+        '<span class="brand__name">aykhan<span class="brand__tld">.net</span></span>' +
       '</a>' +
       '<div class="nav-right">' +
         '<div class="nav-links">' +
@@ -38,8 +38,8 @@
   footer.innerHTML =
     '<div class="wrap site-footer__inner">' +
       '<a class="brand" href="' + home + '">' +
-        '<img src="' + logo + '" alt="Aykhan Ahmadzada logo" />' +
-        '<span>aykhan.net</span>' +
+        '<span class="brand__logo"><img src="' + logo + '" alt="Aykhan Ahmadzada logo" /></span>' +
+        '<span class="brand__name">aykhan<span class="brand__tld">.net</span></span>' +
       '</a>' +
       '<div class="contact__links">' +
         '<a class="btn" href="https://github.com/aykhan019" target="_blank" rel="noopener">GitHub</a>' +
