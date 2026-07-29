@@ -159,7 +159,7 @@
 .kwes-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.4rem;
   margin: 0 0 1.6rem;
   padding: 0;
   list-style: none;
@@ -167,7 +167,8 @@
 .kwes-meta li { margin: 0; }
 .kwes-meta a, .kwes-meta span {
   display: inline-block;
-  padding: 0.3rem 0.7rem;
+  padding: 0.3rem 0.55rem;
+  white-space: nowrap;
   border-radius: 999px;
   border: 1px solid var(--rule);
   background: var(--surface-2);
@@ -181,8 +182,12 @@
 /* Kapital Bank mark, recoloured onto the page palette: the K takes the accent,
    the wordmark inherits the badge text colour so it follows the theme. */
 /* Keeps the shared 0.3rem block padding, so the svg height is what has to match
-   the text badges' line box for every pill in the row to end up the same height. */
-.kwes-meta__brand { display: inline-flex; align-items: center; }
+   the text badges' line box for every pill in the row to end up the same height.
+   The row has to fit 724px (its narrowest, which is on WIDE screens: the column
+   gap grows with the viewport while the container is capped), so the logo pill
+   runs tighter side padding than the text pills — the logo carries its own. The
+   descendant selector is needed to outrank `.kwes-meta span`. */
+.kwes-meta .kwes-meta__brand { display: inline-flex; align-items: center; padding-inline: 0.45rem; }
 .kwes-meta__brand svg { display: block; height: 1.27rem; width: auto; fill: currentColor; }
 .kwes-brand__mark { fill: var(--first-color); }
 
