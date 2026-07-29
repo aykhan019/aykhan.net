@@ -75,6 +75,14 @@
 }
 .kwes-toc a:hover { color: var(--heading); border-left-color: var(--first-color); }
 .kwes-toc .kwes-toc__sub a { padding-left: 1.5rem; font-size: 0.74rem; }
+/* Set by the scroll-spy below. --is-parent marks the ancestor of an active
+   sub-item so "CLI reference" stays lit while reading one of its commands. */
+.kwes-toc a.is-active {
+  color: var(--first-color);
+  border-left-color: var(--first-color);
+  background: rgba(35, 90, 166, 0.09);
+}
+.kwes-toc a.is-parent-active { color: var(--heading); border-left-color: var(--card-line); }
 
 @media (max-width: 900px) {
   /* Collapse into normal document flow: nothing sticks, nothing overlaps the
@@ -854,14 +862,12 @@ target budget 10 req/s, discovery budget 25 req/s, concurrency 35
   wildcard-probe-hosts.txt: 18 line(s) - 23d8d67ebcb0-kwes-probe.api.example.com, ...
 
 <b>[http] httpx</b>
-  command:   httpx -l &lt;run-dir&gt;/raw/httpx/hosts.txt -json -silent -nc -sc -cl -ct -title -server
-             -td -location -tls-grab -cdn -include-chain -rl 10 -t 35 -timeout 10 -fr -maxr 5
+  command:   httpx -l &lt;run-dir&gt;/raw/httpx/hosts.txt -json -silent -nc -sc -cl -ct -title -server -td -location -tls-grab -cdn -include-chain -rl 10 -t 35 -timeout 10 -fr -maxr 5
   targets:   7
 
 <b>[crawl] katana</b>
   <s>targets shown are placeholders: this stage's real input only exists once earlier stages have run.</s>
-  command:   katana -list &lt;run-dir&gt;/raw/katana/urls.txt -jsonl -silent -nc -fs fqdn -d 2 -ct 10m
-             -mrs 4000000 -rl 10 -c 35 -p 35 -timeout 15 -jc -kf all -fx
+  command:   katana -list &lt;run-dir&gt;/raw/katana/urls.txt -jsonl -silent -nc -fs fqdn -d 2 -ct 10m -mrs 4000000 -rl 10 -c 35 -p 35 -timeout 15 -jc -kf all -fx
   targets:   1</pre>
                     </div>
                     <p>
@@ -1194,8 +1200,7 @@ turned off.</s>
                     <!-- ---- validate ---- -->
                     <h3 id="cli-validate">kwes validate</h3>
                     <div class="kwes-term">
-                        <pre>kwes validate --scope &lt;path&gt; [--profile &lt;name&gt;] [--config-dir &lt;path&gt;]
-                             [--severity &lt;list&gt;] [--rate &lt;n&gt;]</pre>
+                        <pre>kwes validate --scope &lt;path&gt; [--profile &lt;name&gt;] [--config-dir &lt;path&gt;] [--severity &lt;list&gt;] [--rate &lt;n&gt;]</pre>
                     </div>
                     <p>
                         <b>Purpose:</b> load and check all configuration without running anything. It
@@ -1299,10 +1304,7 @@ turned off.</s>
                     <!-- ---- scan ---- -->
                     <h3 id="cli-scan">kwes scan</h3>
                     <div class="kwes-term">
-                        <pre>kwes scan --scope &lt;path&gt; [--profile &lt;name&gt;] [--config-dir &lt;path&gt;]
-                         [--runs-dir &lt;path&gt;] [--dry-run] [--verbose | -v]
-                         [--resume &lt;run_id&gt;] [--severity &lt;list&gt;] [--rate &lt;n&gt;]
-                         [--incremental]</pre>
+                        <pre>kwes scan --scope &lt;path&gt; [--profile &lt;name&gt;] [--config-dir &lt;path&gt;] [--runs-dir &lt;path&gt;] [--dry-run] [--verbose | -v] [--resume &lt;run_id&gt;] [--severity &lt;list&gt;] [--rate &lt;n&gt;] [--incremental]</pre>
                     </div>
                     <p>
                         <b>Purpose:</b> run the configured pipeline against an authorized scope.
@@ -1518,6 +1520,67 @@ turned off.</s>
   }
   window.addEventListener('load', reanchor);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(reanchor);
+})();
+
+// Scroll-spy: light the table-of-contents entry for the section being read.
+// Position-based rather than IntersectionObserver, because sections here differ
+// enormously in height — an observer keyed on visibility flickers between two
+// entries when a short section sits fully inside the viewport next to a long one.
+(function () {
+  var toc = document.querySelector('.kwes-toc');
+  if (!toc) return;
+  var links = [].slice.call(toc.querySelectorAll('a[href^="#"]'));
+  var items = links.map(function (a) {
+    return { link: a, el: document.getElementById(a.getAttribute('href').slice(1)) };
+  }).filter(function (i) { return i.el; });
+  if (!items.length) return;
+
+  var current = null;
+
+  function activate(item) {
+    if (item === current) return;
+    current = item;
+    links.forEach(function (a) { a.classList.remove('is-active', 'is-parent-active'); });
+    item.link.classList.add('is-active');
+
+    // Keep the enclosing top-level entry lit for nested items.
+    var li = item.link.closest('li');
+    var parentLi = li && li.parentElement && li.parentElement.closest('li');
+    var parentLink = parentLi && parentLi.querySelector('a');
+    if (parentLink) parentLink.classList.add('is-parent-active');
+
+    // Follow along inside the rail's own scrollbar, without moving the page.
+    var top = item.link.offsetTop, h = item.link.offsetHeight;
+    if (top < toc.scrollTop) toc.scrollTop = top - 8;
+    else if (top + h > toc.scrollTop + toc.clientHeight) toc.scrollTop = top + h - toc.clientHeight + 8;
+  }
+
+  function update() {
+    // The line the heading has to cross to count as "being read" — just under
+    // the fixed nav, matching the site's scroll-padding-top.
+    var line = 96;
+    var found = items[0];
+    for (var i = 0; i < items.length; i++) {
+      if (items[i].el.getBoundingClientRect().top <= line) found = items[i];
+    }
+    // At the very bottom nothing further can cross the line, so the last entry
+    // would never light up on a page ending in short sections.
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) {
+      found = items[items.length - 1];
+    }
+    activate(found);
+  }
+
+  var ticking = false;
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function () { ticking = false; update(); });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  window.addEventListener('load', update);
+  update();
 })();
 </script>
 </body>

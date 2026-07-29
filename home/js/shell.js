@@ -25,6 +25,9 @@
           '<a href="' + home + '#journey-overview">Journey</a>' +
           '<a href="' + home + '#achievements">Achievements</a>' +
           '<a href="' + home + '#discover-more">Discover More</a>' +
+          // Keep in step with the landing page's own hardcoded nav in
+          // index.html — inner pages had been missing Services.
+          '<a href="' + home + '#public-services">Services</a>' +
         '</div>' +
         '<button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark / light mode">' +
           '<svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z" /></svg>' +
