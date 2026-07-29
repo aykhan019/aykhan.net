@@ -1,0 +1,1525 @@
+<!DOCTYPE html>
+<html data-theme="dark">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>KWES — Kapital Web Exposure Scanner | aykhan.net</title>
+    <meta name="description" content="Documentation for KWES, a configuration-driven orchestrator that runs seven security CLIs against assets an allowlist explicitly authorizes.">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="msapplication-tap-highlight" content="no">
+    <link rel="icon" type="image/x-icon"
+        href="https://res.cloudinary.com/dbriqxpaa/image/upload/v1680096853/Logo/logo-xl-ico_qzbf7d.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/home/css/site.css" />
+    <script>(function(){try{var s=localStorage.getItem('theme');var t=s||(window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+</head>
+
+<body>
+<!-- Page-local styles live in <body> because tools/build-heads.js rewrites every
+     page's head from tools/head.html, so a stylesheet link added up there would be
+     dropped by the next `pnpm build`. Nothing here is needed by another page. -->
+<style>
+.kwes {
+  --ok:   #3fb950;
+  --warn: #f06449;
+  --rule: var(--card-line);
+}
+:root[data-theme="light"] .kwes { --ok: #1a7f37; --warn: #d03a1f; }
+
+/* ---------- two-column shell: sticky nav rail + document ---------- */
+.kwes-layout {
+  display: grid;
+  grid-template-columns: 15rem minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: start;
+}
+/* minmax(0, 1fr) is what stops a wide table stretching the grid track and
+   pushing the whole page sideways. Every scroller below depends on it. */
+
+.kwes-toc {
+  position: sticky;
+  top: 5.5rem;
+  align-self: start;
+  max-height: calc(100vh - 7rem);
+  overflow-y: auto;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--surface-2);
+}
+.kwes-toc h2 {
+  margin: 0 0 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--first-color);
+}
+.kwes-toc ol { list-style: none; margin: 0; padding: 0; }
+.kwes-toc li { margin: 0; }
+.kwes-toc a {
+  display: block;
+  padding: 0.28rem 0 0.28rem 0.6rem;
+  margin-left: -0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.79rem;
+  line-height: 1.4;
+  color: var(--text-soft);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.kwes-toc a:hover { color: var(--heading); border-left-color: var(--first-color); }
+.kwes-toc .kwes-toc__sub a { padding-left: 1.5rem; font-size: 0.74rem; }
+
+@media (max-width: 900px) {
+  /* Collapse into normal document flow: nothing sticks, nothing overlaps the
+     text, and the reader scrolls past it once. */
+  .kwes-layout { grid-template-columns: minmax(0, 1fr); }
+  .kwes-toc {
+    position: static;
+    max-height: none;
+    overflow: visible;
+    margin-bottom: 2rem;
+  }
+  .kwes-toc ol { columns: 2; column-gap: 1.2rem; }
+  .kwes-toc .kwes-toc__sub { display: none; }
+}
+@media (max-width: 480px) {
+  .kwes-toc ol { columns: 1; }
+}
+
+/* ---------- document typography ---------- */
+.kwes-doc { min-width: 0; }
+.kwes-doc h2 {
+  margin: 3rem 0 0.9rem;
+  font-size: clamp(1.3rem, 2.2vw, 1.65rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--heading);
+}
+.kwes-doc > section:first-of-type h2 { margin-top: 0; }
+.kwes-doc h3 {
+  margin: 2.1rem 0 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 1.02rem;
+  font-weight: 500;
+  color: var(--heading);
+}
+.kwes-doc h4 {
+  margin: 1.5rem 0 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+}
+.kwes-doc p, .kwes-doc li {
+  font-size: 0.95rem;
+  line-height: 1.72;
+  color: var(--text);
+}
+.kwes-doc p { margin: 0 0 1rem; }
+.kwes-doc ul, .kwes-doc ol { margin: 0 0 1.1rem; padding-left: 1.15rem; }
+.kwes-doc li { margin-bottom: 0.45rem; }
+.kwes-doc a { color: var(--first-color); text-decoration: none; border-bottom: 1px solid transparent; }
+.kwes-doc a:hover { border-bottom-color: var(--first-color); }
+/* No scroll-margin-top here: site.css already sets scroll-padding-top: 5rem on
+   <html>, and the two would stack into a large gap above a linked section. */
+.kwes-doc strong { color: var(--heading); font-weight: 600; }
+.kwes-doc code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  padding: 0.1em 0.36em;
+  border-radius: 5px;
+  background: var(--surface-2);
+  border: 1px solid var(--rule);
+  color: var(--text);
+  overflow-wrap: break-word;
+}
+
+/* ---------- lede + badge row ---------- */
+.kwes-lede {
+  font-size: 1.05rem !important;
+  line-height: 1.68 !important;
+}
+.kwes-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0 0 1.6rem;
+  padding: 0;
+  list-style: none;
+}
+.kwes-meta li { margin: 0; }
+.kwes-meta a, .kwes-meta span {
+  display: inline-block;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--surface-2);
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.02em;
+  color: var(--text-soft);
+  text-decoration: none;
+}
+.kwes-meta a:hover { border-color: var(--first-color); color: var(--first-color); }
+
+/* ---------- callouts ---------- */
+.kwes-callout {
+  margin: 0 0 1.6rem;
+  padding: 1.05rem 1.25rem;
+  border-radius: 12px;
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--first-color);
+  background: var(--surface-2);
+}
+.kwes-callout > :last-child { margin-bottom: 0; }
+.kwes-callout--danger { border-left-color: var(--warn); }
+.kwes-callout__label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--first-color);
+}
+.kwes-callout--danger .kwes-callout__label { color: var(--warn); }
+
+/* ---------- terminal blocks ---------- */
+.kwes-term {
+  margin: 0 0 1.4rem;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--surface-2);
+}
+.kwes-term__bar {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.85rem;
+  border-bottom: 1px solid var(--rule);
+  background: var(--surface);
+}
+.kwes-term__dot { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; }
+.kwes-term__dot:nth-child(1) { background: #ff5f56; }
+.kwes-term__dot:nth-child(2) { background: #ffbd2e; }
+.kwes-term__dot:nth-child(3) { background: #27c93f; }
+.kwes-term__title {
+  margin-left: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.73rem;
+  color: var(--text-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.kwes-term pre {
+  margin: 0;
+  padding: 0.95rem 1.1rem;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.795rem;
+  line-height: 1.62;
+  color: var(--text);
+}
+.kwes-term pre b { color: var(--heading); font-weight: 500; }
+.kwes-term pre i { color: var(--text-soft); font-style: normal; }
+.kwes-term pre u { color: var(--ok); text-decoration: none; }
+.kwes-term pre s { color: var(--warn); text-decoration: none; }
+
+/* ---------- tables ---------- */
+.kwes-scroll {
+  margin: 0 0 1.5rem;
+  overflow-x: auto;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--surface-2);
+}
+.kwes-scroll table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.83rem;
+  line-height: 1.6;
+}
+.kwes-scroll th, .kwes-scroll td {
+  padding: 0.62rem 0.85rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--rule);
+}
+.kwes-scroll thead th {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  white-space: nowrap;
+  background: var(--surface);
+}
+.kwes-scroll tbody th {
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: var(--heading);
+  white-space: nowrap;
+}
+.kwes-scroll tbody tr:last-child td, .kwes-scroll tbody tr:last-child th { border-bottom: 0; }
+.kwes-nowrap { white-space: nowrap; }
+.kwes-yes { color: var(--warn); font-family: var(--font-mono); font-size: 0.78rem; }
+.kwes-no  { color: var(--ok);   font-family: var(--font-mono); font-size: 0.78rem; }
+
+/* ---------- flag reference list ---------- */
+.kwes-flags { margin: 0 0 1.3rem; }
+.kwes-flags dt {
+  margin-top: 0.95rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--heading);
+}
+.kwes-flags dt:first-child { margin-top: 0; }
+.kwes-flags dd {
+  margin: 0.28rem 0 0;
+  padding-left: 1.1rem;
+  border-left: 1px solid var(--rule);
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: var(--text-soft);
+}
+.kwes-flags dd b { color: var(--text); font-weight: 500; }
+</style>
+
+<section class="case-studies kwes" itemscope itemprop="mainContentOfPage">
+    <div class="content">
+        <div class="section-text-mask">
+            <h4 class="h5 section-subtitle">Project · Security tooling</h4>
+        </div>
+        <div class="section-text-mask">
+            <h2 class="h3 section-title">KWES — Kapital Web Exposure Scanner</h2>
+        </div>
+
+        <div class="kwes-layout">
+
+            <!-- ============ sticky table of contents (no JavaScript) ============ -->
+            <nav class="kwes-toc" aria-label="On this page">
+                <h2>On this page</h2>
+                <ol>
+                    <li><a href="#overview">What KWES is</a></li>
+                    <li><a href="#authorized-use">Authorized use only</a></li>
+                    <li><a href="#pipeline">The pipeline</a></li>
+                    <li><a href="#safety-model">The safety model</a></li>
+                    <li><a href="#quick-start">Quick start</a></li>
+                    <li><a href="#scope-file">The scope file</a></li>
+                    <li><a href="#profiles">Profiles</a></li>
+                    <li><a href="#cli">CLI reference</a>
+                        <ol class="kwes-toc__sub">
+                            <li><a href="#cli-version">version</a></li>
+                            <li><a href="#cli-validate">validate</a></li>
+                            <li><a href="#cli-doctor">doctor</a></li>
+                            <li><a href="#cli-scan">scan</a></li>
+                        </ol>
+                    </li>
+                    <li><a href="#output">Output contract</a></li>
+                    <li><a href="#links">Links</a></li>
+                </ol>
+            </nav>
+
+            <!-- ============ document ============ -->
+            <div class="kwes-doc">
+
+                <!-- ---------- 1. what and why ---------- -->
+                <section id="overview">
+                    <h2>What KWES is</h2>
+
+                    <ul class="kwes-meta">
+                        <li><a href="https://github.com/aykhan019/kwes" target="_blank" rel="noopener">github.com/aykhan019/kwes</a></li>
+                        <li><span>Python 3.11+</span></li>
+                        <li><span>Apache-2.0</span></li>
+                        <li><span>v0.1.0 · pre-1.0</span></li>
+                    </ul>
+
+                    <p class="kwes-lede">
+                        <strong>KWES — Kapital Web Exposure Scanner</strong> is a configuration-driven
+                        orchestrator that runs seven established security CLIs against assets an
+                        allowlist explicitly authorizes. It handles scope enforcement, one shared
+                        traffic budget, process-group cancellation, secret redaction, raw-evidence
+                        preservation and resumable runs, then normalizes every tool's output into a
+                        single finding model with evidence attached. It was built for, and named
+                        after, the estate it was first written to assess — but nothing in it is
+                        specific to that estate. The scope file is the only thing that decides what
+                        gets touched.
+                    </p>
+
+                    <div class="kwes-callout">
+                        <span class="kwes-callout__label">What it is not</span>
+                        <p>
+                            KWES is <strong>not a vulnerability-detection engine</strong>, and not a
+                            substitute for a penetration test. It discovers and reports; a human
+                            validates. Every automated result is recorded <code>unverified</code>
+                            until a person says otherwise, and the severity a tool claimed
+                            (<code>severity_raw</code>) is kept in a separate field from the severity
+                            an analyst assigns. Conflating those two is what makes automated security
+                            reports untrustworthy.
+                        </p>
+                    </div>
+
+                    <p>
+                        The rest of this page is ordered so a reader can stop at any point and have
+                        gotten something: the legal constraint first, then what the seven stages do
+                        and how each one is wrong, then the controls that make it defensible, then
+                        how to run it.
+                    </p>
+                </section>
+
+                <!-- ---------- 2. authorized use ---------- -->
+                <section id="authorized-use">
+                    <h2>Authorized use only</h2>
+
+                    <div class="kwes-callout kwes-callout--danger">
+                        <span class="kwes-callout__label">Read this before installing</span>
+                        <p>
+                            KWES sends real traffic to real systems.
+                            <strong>Scanning infrastructure you do not own or have written
+                            authorization to test is unlawful in most jurisdictions</strong> —
+                            including the Computer Misuse Act (UK), the Computer Fraud and Abuse Act
+                            (US), and equivalents elsewhere. Authorization is the user's
+                            responsibility, not the tool's.
+                        </p>
+                    </div>
+
+                    <p>
+                        KWES is designed so that the safe path is the only path, but no tool can
+                        verify that your paperwork is real. Three things follow from that:
+                    </p>
+
+                    <ul>
+                        <li>
+                            <strong>There is no <code>--target</code> flag.</strong> Scope is a file
+                            containing an <code>authorization</code> block that names who approved
+                            the work, under what reference, and until when. Without it the run does
+                            not start.
+                        </li>
+                        <li>
+                            <strong>Discovery never grants permission.</strong> A hostname from
+                            subfinder, a CNAME from dnsx, or a URL from a crawler is inventory. It is
+                            re-checked against your allowlist at the adapter boundary before any
+                            stage can touch it — not once at startup, because every stage generates
+                            new targets that nobody authorized.
+                        </li>
+                        <li>
+                            <strong>CDN-fronted assets are refused even when the hostname is in your
+                            allowlist.</strong> You cannot authorize testing of infrastructure you do
+                            not own, and neither can the organization that hired you.
+                        </li>
+                    </ul>
+
+                    <p>
+                        If you are running KWES against an estate you do not personally own, keep the
+                        signed authorization for as long as you keep the run directory.
+                        <code>manifest.json</code> records the scope, the authorization block, the
+                        tool versions, and the rate limit in force — <em>"how fast did you scan
+                        us"</em> is the first question after any complaint, and the answer needs to
+                        come from the run record.
+                    </p>
+                </section>
+
+                <!-- ---------- 3. the pipeline ---------- -->
+                <section id="pipeline">
+                    <h2>The pipeline</h2>
+
+                    <div class="kwes-term">
+                        <pre>subfinder → dnsx → httpx → katana → jsluice → ffuf → nuclei → normalization</pre>
+                    </div>
+
+                    <p>
+                        Seven stages. The <strong>"How it is wrong"</strong> column is not a
+                        disclaimer bolted on at the end — it is the reason a human validates
+                        everything KWES reports, and it is the most useful thing on this page.
+                    </p>
+
+                    <div class="kwes-scroll">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Stage</th>
+                                    <th>Tool</th>
+                                    <th>What it adds</th>
+                                    <th>How it is wrong</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td><code>subdomains</code></td>
+                                    <td class="kwes-nowrap">subfinder</td>
+                                    <td>Hostnames under a root domain, from certificate transparency and passive DNS. Sends nothing to the target.</td>
+                                    <td>Returns dead hostnames and names owned by other people.</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td><code>dns</code></td>
+                                    <td class="kwes-nowrap">dnsx</td>
+                                    <td>A/AAAA/CNAME records, plus wildcard-DNS detection.</td>
+                                    <td>A wildcard record makes every invented name look alive; without the probe one record inflates the inventory by hundreds.</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td><code>http</code></td>
+                                    <td class="kwes-nowrap">httpx</td>
+                                    <td>Which hosts actually answer, with status, title, server, TLS, and technology guesses.</td>
+                                    <td>Technology detection is a header-and-body guess. It routes later checks; it never proves a version.</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td><code>crawl</code></td>
+                                    <td class="kwes-nowrap">katana</td>
+                                    <td>The routes behind each live URL — pages, API paths, form parameters.</td>
+                                    <td>Reports links it <em>found</em>, including 404s and routes retired years ago.</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td><code>js_analysis</code></td>
+                                    <td class="kwes-nowrap">jsluice</td>
+                                    <td>API paths parsed out of JavaScript bundles, which no page links to.</td>
+                                    <td>Every high-entropy string looks like a key; build hashes dominate the noise.</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td><code>content_discovery</code></td>
+                                    <td class="kwes-nowrap">ffuf</td>
+                                    <td>Paths nobody advertised — the forgotten admin panel, the exposed <code>.git</code>.</td>
+                                    <td><strong>Soft-404s above all.</strong> A site answering 200 for missing pages makes every guess a hit.</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td><code>findings</code></td>
+                                    <td class="kwes-nowrap">nuclei</td>
+                                    <td>Template matches for known exposures and misconfigurations.</td>
+                                    <td>A template match is a pattern match, not a proof.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h4>Terms used above</h4>
+                    <ul>
+                        <li>
+                            <strong>CNAME</strong> — a DNS record making one hostname an alias for
+                            another. When <code>www.example.com</code> is a CNAME for
+                            <code>example.map.fastly.net</code>, the domain's own owner is stating
+                            that Fastly serves it. That is the strongest signal KWES has that a name
+                            is fronted by a third party, and it is visible before any HTTP request.
+                        </li>
+                        <li>
+                            <strong>Wildcard DNS</strong> — a record that answers for <em>every</em>
+                            name under a domain, including names nobody created. Without a probe that
+                            resolves an invented hostname, one wildcard record makes hundreds of
+                            guessed names look like live hosts.
+                        </li>
+                        <li>
+                            <strong>Soft-404</strong> — a page answering HTTP 200 with a "not found"
+                            body instead of a 404 status. To a content-discovery tool every wrong
+                            guess then looks like a hit, so a 500-word list "finds" 500 paths that do
+                            not exist. ffuf's per-host auto-calibration is what filters those.
+                        </li>
+                        <li>
+                            <strong>Template match</strong> — a Nuclei template describes a request
+                            and a pattern its response should contain. A match means the pattern was
+                            present, not that the issue is exploitable.
+                        </li>
+                    </ul>
+
+                    <h4>Order lives in configuration, not in code</h4>
+                    <p>
+                        The order lives in <code>config/pipeline.yaml</code>. No module encodes
+                        "after httpx comes katana" — stages connect by declared input/output
+                        <em>kind</em>, so any stage can be disabled or reordered without touching
+                        Python. A stage whose input and output kinds match is a verification step
+                        that <em>narrows</em> the working set, which is how the DNS stage removes
+                        hostnames that turned out not to resolve.
+                    </p>
+                    <p>
+                        <strong>Stage 6 is the only one that needs a capability grant.</strong>
+                        Guessing at unadvertised paths is more intrusive than following links, so
+                        ffuf declares <code>requires_capabilities = {directory_fuzzing}</code> and
+                        the orchestrator refuses the stage unless <strong>both</strong> the profile
+                        and the scope document grant it. The shipped <code>safe</code> and
+                        <code>fast</code> profiles leave it off.
+                    </p>
+                </section>
+
+                <!-- ---------- 4. safety model ---------- -->
+                <section id="safety-model">
+                    <h2>The safety model</h2>
+
+                    <p>
+                        These are enforced in code, by types and tests, rather than by documentation
+                        and reviewer discipline. <code>tests/unit/test_architecture.py</code> fails
+                        the build if an adapter imports the pipeline, or if a module outside the
+                        runner spawns a process.
+                    </p>
+
+                    <h3>Scope is a type, not a check</h3>
+                    <p>
+                        Adapters accept only <code>AuthorizedTarget</code> values, and
+                        <code>ScopePolicy.authorize()</code> alone can construct one — the
+                        constructor demands a sentinel object that only
+                        <code>kwes/scope/policy.py</code> holds. Passing a raw string is a type
+                        error caught by mypy, not a review miss. A single upfront check would run
+                        before the risky data exists; every stage generates new targets, so the gate
+                        sits immediately before traffic is sent.
+                    </p>
+                    <p>
+                        Refusals are recorded rather than silently dropped, each with a structured
+                        reason: <code>not_in_allowlist</code>, <code>explicitly_excluded</code>,
+                        <code>cdn_fronted</code>, <code>wildcard_artifact</code>, or
+                        <code>malformed</code>. An operator who cannot see what was skipped has no
+                        way to tell a correct scope file from a broken one — a typo that excludes
+                        everything looks exactly like a clean scan.
+                    </p>
+
+                    <h3>One traffic budget, not one per tool</h3>
+                    <p>
+                        Five tools each capped at 50 requests/second is 250 requests/second arriving
+                        at the target. Every tool derives its rate flag from one configured number,
+                        and no two active stages run against the same host concurrently. httpx and
+                        nuclei both default to 150 on their own, which is why KWES always passes the
+                        flag explicitly.
+                    </p>
+                    <div class="kwes-callout">
+                        <span class="kwes-callout__label">The shipped default is 10, not 50</span>
+                        <p>
+                            <code>config/tools.yaml</code> ships
+                            <code>target_rate_limit: 10</code>, and it defaults low on purpose. 10 is
+                            the rate you can run against an estate before you know which host is a
+                            marketing page and which is a payment gateway — nothing in KWES can tell
+                            those apart, so the default assumes the worst one. The 50 above is the
+                            illustration of why per-tool limits do not compose, not the setting.
+                        </p>
+                    </div>
+                    <p>
+                        No stated rate limit is not permission to scan fast. Web application
+                        firewalls commonly rate-limit a single source address somewhere in the 50–100
+                        range; tripping one blocks your address and ends the run — a self-inflicted
+                        outage, plus an alert somebody has to explain. A critical-only sweep is
+                        roughly 1,560 requests per live URL, so 500 URLs is about 21.7 hours at 10/s
+                        and 4.3 at 50/s. <strong>If your window does not fit, split the scope into
+                        batches rather than raising the rate</strong> — two runs at a reviewed rate
+                        are safe; one run at double the rate is not.
+                    </p>
+
+                    <h3>One subprocess site</h3>
+                    <p>
+                        <code>tools/runner.py</code> is the only place a process is spawned. It is
+                        the single place that enforces timeouts, process-group cancellation, and the
+                        no-shell rule — a second spawn site would silently opt out of all three, and
+                        a test asserts no other module can spawn.
+                    </p>
+                    <p>
+                        <strong>No <code>shell=True</code>, ever, and no command strings built by
+                        interpolation.</strong> Argument lists only. A hostname is
+                        attacker-influenced input — it arrives from a certificate transparency log or
+                        a passive DNS API — and the difference between passing an argv list and using
+                        a shell is the difference between a hostname and command execution on your
+                        own scanning host. Hostnames are additionally shape-checked, which blocks
+                        separator injection: the single string
+                        <code>evil.net,www.example.com</code> genuinely <em>ends with</em>
+                        <code>.example.com</code>, and without that check it would be split back into
+                        two names by the tool receiving it.
+                    </p>
+                    <p>
+                        <strong>Cancellation kills the process group.</strong> Tools launch in a new
+                        session, and Ctrl-C sets a cancellation flag rather than killing Python
+                        directly. Signalling only the direct child would leave the tool's own
+                        children sending traffic after you believe the run stopped.
+                    </p>
+
+                    <h3>Secrets are redacted at ingestion</h3>
+                    <p>
+                        Redaction happens before anything is written to disk — <em>including</em>
+                        before raw tool output is persisted, so there is no window in which an
+                        unredacted authorization header, cookie, or token exists in a file. A
+                        discovered credential is never tested: when jsluice reports a
+                        credential-shaped string in a JavaScript bundle, KWES records that such a
+                        string exists and never records its value. Using one is unauthorized access
+                        whatever the intent.
+                    </p>
+
+                    <h3>Third-party infrastructure is refused</h3>
+                    <p>
+                        A CDN sits in front of a website: visitors connect to the provider's servers
+                        and the provider fetches content from the customer's real server behind the
+                        scenes. That creates two distinct problems.
+                        <strong>Authorization</strong> — a request to a Cloudflare edge reaches a
+                        machine Cloudflare owns, and the target has no standing to authorize testing
+                        it. <strong>Attribution</strong> — <code>Server: cloudflare</code> says
+                        nothing about what the target runs, and a missing security header may be the
+                        CDN's configuration rather than the application's.
+                    </p>
+                    <p>
+                        So CDN-fronted assets are tagged during DNS and HTTP inventory, excluded from
+                        active stages, and findings tied to a CDN's IP address are suppressed rather
+                        than merely labelled. Detection uses three independent signals: the CNAME
+                        chain, the resolved address matched against
+                        <code>config/cdn-ranges.yaml</code> (the most common Cloudflare arrangement
+                        has no CNAME at all, so the address is the only evidence), and httpx's own
+                        detection as a third opinion. None is complete — the exclusions in your scope
+                        file remain the authoritative answer.
+                    </p>
+                    <p>
+                        Resolution is not authorization either: an address is in scope only when the
+                        scope file says so. Bank hostnames routinely resolve into CDN and cloud ranges
+                        owned by other companies, and shared hosting puts unrelated customers behind
+                        one address.
+                    </p>
+
+                    <h3>Findings stay unverified</h3>
+                    <p>
+                        Every finding is recorded <code>unverified</code>.
+                        <code>severity_raw</code> holds whatever the tool claimed and stays separate
+                        from the severity an analyst assigns, which is empty until a person fills it
+                        in. <strong>KWES finds candidates, not vulnerabilities.</strong>
+                    </p>
+
+                    <h3>Skipping work is never skipping scope</h3>
+                    <p>
+                        <code>--incremental</code> may leave a host out of a stage, but only a stage
+                        whose adapter declares itself skippable, only after the host passed
+                        <code>scope.authorize()</code> like any other, and only if the manifest and
+                        summary name it with the date it is relying on. The
+                        <code>incremental/</code> layer can only <em>remove</em> hosts from a list
+                        scope already approved — it has no route to add one. Every uncertainty
+                        resolves to <em>scan</em>: an unnecessary scan costs requests, while a
+                        wrongly skipped host costs a finding nothing in the report reveals.
+                    </p>
+                </section>
+
+                <!-- ---------- 5. quick start ---------- -->
+                <section id="quick-start">
+                    <h2>Quick start</h2>
+
+                    <p>
+                        KWES <strong>never installs anything on your behalf.</strong> The seven
+                        scanners are operator-installed prerequisites. If one is missing, KWES names
+                        the binary and fails the run — it will not silently skip a stage or
+                        substitute a different tool.
+                    </p>
+
+                    <h3>1. The Python package</h3>
+                    <div class="kwes-term">
+                        <div class="kwes-term__bar"><span class="kwes-term__dot"></span><span class="kwes-term__dot"></span><span class="kwes-term__dot"></span><span class="kwes-term__title">install</span></div>
+                        <pre>git clone https://github.com/aykhan019/kwes.git
+cd kwes
+uv tool install --editable .</pre>
+                    </div>
+                    <p>
+                        That puts a <code>kwes</code> command on your PATH, so every example on this
+                        page works from any directory — <code>kwes scan ...</code> rather than
+                        <code>uv run kwes scan ...</code>. <code>--editable</code> means the command
+                        tracks this checkout, so a <code>git pull</code> updates the installed tool
+                        and the bundled configuration together.
+                    </p>
+                    <p>
+                        If <code>kwes: command not found</code>, <code>uv</code> installed it to
+                        <code>~/.local/bin</code>, which is not on your PATH:
+                    </p>
+                    <div class="kwes-term">
+                        <pre>uv tool update-shell     <i># then restart your shell</i></pre>
+                    </div>
+                    <p>
+                        To develop rather than use, <code>uv sync</code> is enough and
+                        <code>uv run kwes ...</code> works without installing anything globally.
+                    </p>
+
+                    <h3>2. The scanners</h3>
+                    <p>
+                        <a href="https://github.com/projectdiscovery" target="_blank" rel="noopener">ProjectDiscovery</a>
+                        tools, plus
+                        <a href="https://github.com/ffuf/ffuf" target="_blank" rel="noopener">ffuf</a>
+                        and
+                        <a href="https://github.com/BishopFox/jsluice" target="_blank" rel="noopener">jsluice</a>:
+                    </p>
+                    <div class="kwes-term">
+                        <div class="kwes-term__bar"><span class="kwes-term__dot"></span><span class="kwes-term__dot"></span><span class="kwes-term__dot"></span><span class="kwes-term__title">prerequisites</span></div>
+                        <pre>go install github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
+go install github.com/projectdiscovery/dnsx/cmd/dnsx@latest
+go install github.com/projectdiscovery/httpx/cmd/httpx@latest
+go install github.com/projectdiscovery/katana/cmd/katana@latest
+go install github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
+go install github.com/ffuf/ffuf/v2@latest
+go install github.com/BishopFox/jsluice/cmd/jsluice@latest</pre>
+                    </div>
+
+                    <h3>3. The Nuclei template set</h3>
+                    <p>Also not vendored, for the same reason:</p>
+                    <div class="kwes-term">
+                        <pre>nuclei -update-templates</pre>
+                    </div>
+
+                    <h3>4. Confirm the environment</h3>
+                    <div class="kwes-term">
+                        <pre>kwes doctor</pre>
+                    </div>
+                    <p>
+                        <code>doctor</code> runs each binary's version flag — a local call that sends
+                        no network traffic — and checks the template set is present. Running it first
+                        means you find out nuclei is missing <em>before</em> three stages have
+                        already sent traffic. Every tool's version output is recorded into each run's
+                        manifest, because Go-based tools drift between installs and results are not
+                        reproducible without knowing which build produced them.
+                    </p>
+
+                    <h3>5. Your first run</h3>
+                    <div class="kwes-term">
+                        <div class="kwes-term__bar"><span class="kwes-term__dot"></span><span class="kwes-term__dot"></span><span class="kwes-term__dot"></span><span class="kwes-term__title">quick start</span></div>
+                        <pre><i># 1. Write your authorization document.</i>
+cp targets/scope.example.yaml targets/scope.yaml
+$EDITOR targets/scope.yaml
+
+<i># 2. Check it loads and see exactly what it would permit. Sends nothing.</i>
+kwes validate --scope targets/scope.yaml
+
+<i># 3. Print the exact command every stage would run. Still sends nothing.</i>
+kwes scan --scope targets/scope.yaml --dry-run
+
+<i># 4. Run it.</i>
+kwes scan --scope targets/scope.yaml --profile safe --verbose</pre>
+                    </div>
+
+                    <div class="kwes-callout">
+                        <span class="kwes-callout__label">Steps 2 and 3 send no packets</span>
+                        <p>
+                            <code>validate</code> and <code>--dry-run</code> are the two commands
+                            worth building a habit around. Between them they answer
+                            <em>"would this start, and what exactly would it be allowed to do"</em>
+                            without a single packet leaving the machine.
+                        </p>
+                    </div>
+
+                    <h4>What <code>validate</code> prints</h4>
+                    <p>Real output, against the annotated example scope file:</p>
+                    <div class="kwes-term">
+                        <div class="kwes-term__bar"><span class="kwes-term__dot"></span><span class="kwes-term__dot"></span><span class="kwes-term__dot"></span><span class="kwes-term__title">kwes validate --scope targets/scope.example.yaml</span></div>
+                        <pre><u>configuration is valid</u>
+  profile:      safe - Conservative default. Passive discovery plus reviewed, non-intrusive HTTP checks.
+  stages:       subdomains -&gt; dns -&gt; http -&gt; crawl -&gt; js_analysis -&gt; content_discovery -&gt; findings
+  to target:    10 req/s max (httpx, katana, jsluice, ffuf, nuclei)
+  to sources:   25 req/s (subfinder, dnsx)
+  concurrency:  35 in flight
+  severities:   low, medium, high, critical
+  scope:        3 root domain(s), 4 subdomain(s), 2 IP range(s), 4 exclusion(s)
+  capabilities: none (read-only)</pre>
+                    </div>
+                    <p>
+                        Note <code>capabilities: none (read-only)</code>. That line is the
+                        intersection of the profile's capabilities and the scope document's — the
+                        thing that actually governs the run — rather than the profile's list alone,
+                        which would overstate what this run may do.
+                    </p>
+
+                    <h4>What <code>--dry-run</code> prints</h4>
+                    <p>
+                        The exact argv of every stage, and the target list files that no longer
+                        appear on the command line. A preview that hid the target list would
+                        understate the run, and an operator reads a preview and believes it. The
+                        wildcard probe names matter most — they are hostnames KWES invented, and this
+                        is the only chance to check them before they are queried.
+                    </p>
+                    <div class="kwes-term">
+                        <div class="kwes-term__bar"><span class="kwes-term__dot"></span><span class="kwes-term__dot"></span><span class="kwes-term__dot"></span><span class="kwes-term__title">kwes scan --scope targets/scope.example.yaml --dry-run</span></div>
+                        <pre><s>dry run - nothing will be executed</s>
+
+target budget 10 req/s, discovery budget 25 req/s, concurrency 35
+
+<b>[subdomains] subfinder</b>
+  command:   subfinder -dL &lt;run-dir&gt;/raw/subfinder/domains.txt -silent -oJ -rl 25 -max-time 4
+  targets:   3
+  domains.txt: 3 line(s) - example.com, example.com.az, example.org
+
+<b>[dns] dnsx</b>
+  preflight: dnsx -a -json -silent -rl 25 -retry 1 -l &lt;run-dir&gt;/raw/dnsx/wildcard-probe-hosts.txt
+  command:   dnsx -a -aaaa -cname -json -silent -rl 25 -t 35 -retry 2 -l &lt;run-dir&gt;/raw/dnsx/hosts.txt
+  targets:   7
+  hosts.txt: 7 line(s) - example.com, example.com.az, example.org, api.example.com, ...
+  wildcard-probe-hosts.txt: 18 line(s) - 23d8d67ebcb0-kwes-probe.api.example.com, ...
+
+<b>[http] httpx</b>
+  command:   httpx -l &lt;run-dir&gt;/raw/httpx/hosts.txt -json -silent -nc -sc -cl -ct -title -server
+             -td -location -tls-grab -cdn -include-chain -rl 10 -t 35 -timeout 10 -fr -maxr 5
+  targets:   7
+
+<b>[crawl] katana</b>
+  <s>targets shown are placeholders: this stage's real input only exists once earlier stages have run.</s>
+  command:   katana -list &lt;run-dir&gt;/raw/katana/urls.txt -jsonl -silent -nc -fs fqdn -d 2 -ct 10m
+             -mrs 4000000 -rl 10 -c 35 -p 35 -timeout 15 -jc -kf all -fx
+  targets:   1</pre>
+                    </div>
+                    <p>
+                        Every rate flag in that output — <code>-rl 25</code> for the discovery tools,
+                        <code>-rl 10</code> for the ones reaching the target — is derived from the two
+                        numbers in <code>config/tools.yaml</code>. That is the single traffic budget,
+                        made visible.
+                    </p>
+                </section>
+
+                <!-- ---------- 6. the scope file ---------- -->
+                <section id="scope-file">
+                    <h2>The scope file</h2>
+
+                    <p>
+                        This is the authorization document expressed as configuration, and it is the
+                        only thing that grants KWES permission to send traffic anywhere.
+                        <a href="https://github.com/aykhan019/kwes/blob/main/targets/scope.example.yaml" target="_blank" rel="noopener"><code>targets/scope.example.yaml</code></a>
+                        is heavily annotated.
+                    </p>
+
+                    <div class="kwes-term">
+                        <div class="kwes-term__bar"><span class="kwes-term__dot"></span><span class="kwes-term__dot"></span><span class="kwes-term__dot"></span><span class="kwes-term__title">targets/scope.yaml</span></div>
+                        <pre><b>authorization:</b>
+  authorized_by: "Name, Title, Organization"
+  reference: "Engagement or ticket reference"
+  valid_until: "2026-12-31"
+
+<b>root_domains:</b>        <i># domains to ENUMERATE UNDER (subfinder is handed these)</i>
+  - example.com
+
+<b>subdomains:</b>          <i># specific approved hosts; nothing is enumerated under them</i>
+  - www.example.com
+
+<b>include_subdomains:</b> false   <i># false: only names written here are in scope</i>
+
+<b>exclusions:</b>          <i># never touched, even if discovery finds them</i>
+  - legacy.example.com</pre>
+                    </div>
+
+                    <p>Two things decide how much traffic a run produces:</p>
+                    <ul>
+                        <li>
+                            <strong><code>root_domains</code> vs <code>subdomains</code></strong>
+                            answer different questions. A root domain is enumerated under. A
+                            subdomain is a single approved host. Putting
+                            <code>www.example.com</code> in <code>root_domains</code> asks subfinder
+                            to find subdomains <em>of that host</em>, which returns nothing and
+                            spends minutes doing so.
+                        </li>
+                        <li>
+                            <strong><code>include_subdomains</code></strong> decides whether
+                            discovery can widen the run. With <code>true</code>, anything under an
+                            approved root is in scope — so a host nobody reviewed becomes a target
+                            the moment a certificate transparency log mentions it.
+                            <code>false</code> is the right setting for most engagements. What it
+                            costs, stated plainly: no wildcard-DNS probe can be sent, because every
+                            probe name is invented and no entry authorizes an invented name. Hosts
+                            are then reported as <em>unproven</em> for wildcard DNS rather than as
+                            proven free of one, and the run names which hosts those are.
+                        </li>
+                    </ul>
+
+                    <p>
+                        <code>exclusions</code> win over everything, from every entry point —
+                        including a domain that also appears in <code>root_domains</code>. This is
+                        the emergency brake: when someone says "stop testing that host" mid
+                        engagement, it goes here and takes effect on the next run. A
+                        <code>"*.vendor.example.com"</code> entry excludes every host under the name
+                        and the name itself.
+                    </p>
+                    <p>
+                        <strong>An empty key is a deliberate load error.</strong>
+                        <code>subdomains:</code> with nothing after it is <em>null</em> in YAML, not
+                        an empty list, and "deliberately none" and "not filled in yet" are different
+                        statements. Write <code>subdomains: []</code> for the first. KWES refuses to
+                        guess.
+                    </p>
+                    <p>
+                        A separate <code>capabilities</code> block answers "what may be done to these
+                        hosts", as distinct from "which hosts". All five —
+                        <code>port_scan</code>, <code>directory_fuzzing</code>,
+                        <code>authenticated_scanning</code>,
+                        <code>source_repository_scanning</code>, <code>dns_brute_force</code> —
+                        default to false, and the run uses the <em>intersection</em> of these and the
+                        profile's, so neither can widen the other.
+                    </p>
+                    <p>
+                        Real scope files are authorization documents, not source code.
+                        <code>targets/</code> is gitignored except for the example.
+                    </p>
+                </section>
+
+                <!-- ---------- 7. profiles ---------- -->
+                <section id="profiles">
+                    <h2>Profiles</h2>
+
+                    <p>
+                        A profile is scanning <em>policy</em>: which severities may run, which
+                        capabilities are permitted, and how the crawl and fuzzing stages behave.
+                        Selected with <code>--profile</code>; the shipped files live in
+                        <code>config/profiles/</code>.
+                    </p>
+
+                    <div class="kwes-scroll">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th><code>safe</code> (default)</th>
+                                    <th><code>fast</code></th>
+                                    <th><code>deep</code></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>For</th>
+                                    <td>Conservative default</td>
+                                    <td>Estate-wide triage</td>
+                                    <td>Short vetted host list</td>
+                                </tr>
+                                <tr>
+                                    <th>Severities</th>
+                                    <td>low → critical</td>
+                                    <td>high, critical</td>
+                                    <td>info → critical</td>
+                                </tr>
+                                <tr>
+                                    <th>Content discovery</th>
+                                    <td>off</td>
+                                    <td>off</td>
+                                    <td><strong>on</strong></td>
+                                </tr>
+                                <tr>
+                                    <th>Crawl</th>
+                                    <td>—</td>
+                                    <td>—</td>
+                                    <td>depth 3, 10 min/host</td>
+                                </tr>
+                                <tr>
+                                    <th>Relative cost</th>
+                                    <td>baseline</td>
+                                    <td>~4× faster</td>
+                                    <td>~4× slower</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p>
+                        All three exclude the <code>intrusive</code>, <code>dos</code>,
+                        <code>brute-force</code>, <code>fuzzing</code>, <code>headless</code>, and
+                        <code>code</code> template tags, and all three run HTTP templates only.
+                    </p>
+                    <p>
+                        <strong>A host that passes <code>fast</code> has not been fully
+                        checked</strong> — it has been checked for high-and-critical findings only.
+                        The summary says so. The intended shape is two passes: <code>fast</code>
+                        across the estate to find the serious and obvious problems, then
+                        <code>deep</code> against a short scope file of the hosts that came back
+                        interesting plus the ones you already know matter — login portals, admin
+                        interfaces, anything handling money or customer data.
+                    </p>
+                </section>
+
+                <!-- ---------- 8. CLI reference ---------- -->
+                <section id="cli">
+                    <h2>CLI reference</h2>
+
+                    <p>
+                        Four public commands. Everything below is taken from the implemented Typer
+                        CLI (<code>src/kwes/cli.py</code>) and its <code>--help</code> output.
+                    </p>
+
+                    <div class="kwes-scroll">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Command</th>
+                                    <th>Purpose</th>
+                                    <th>Sends traffic?</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><a href="#cli-version"><code>kwes version</code></a></td>
+                                    <td>Print the KWES version.</td>
+                                    <td class="kwes-no">No</td>
+                                </tr>
+                                <tr>
+                                    <td><a href="#cli-validate"><code>kwes validate</code></a></td>
+                                    <td>Load and check all configuration without running anything.</td>
+                                    <td class="kwes-no">No</td>
+                                </tr>
+                                <tr>
+                                    <td><a href="#cli-doctor"><code>kwes doctor</code></a></td>
+                                    <td>Verify every tool an enabled stage needs is installed.</td>
+                                    <td class="kwes-no">No — local version calls only</td>
+                                </tr>
+                                <tr>
+                                    <td><a href="#cli-scan"><code>kwes scan</code></a></td>
+                                    <td>Run the configured pipeline against an authorized scope.</td>
+                                    <td class="kwes-yes">Yes — unless <code>--dry-run</code></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="kwes-term">
+                        <div class="kwes-term__bar"><span class="kwes-term__dot"></span><span class="kwes-term__dot"></span><span class="kwes-term__dot"></span><span class="kwes-term__title">kwes --help</span></div>
+                        <pre>Usage: kwes [OPTIONS] COMMAND [ARGS]...
+
+  KWES - external web scanning of authorized assets.
+
+<b>Options</b>
+  --help          Show this message and exit.
+
+<b>Commands</b>
+  version   Print the KWES version.
+  validate  Load and check the configuration without running anything.
+  scan      Run the configured pipeline against an authorized scope.
+  doctor    Check that every tool an enabled stage needs is actually installed.</pre>
+                    </div>
+
+                    <h4>Options shared by more than one command</h4>
+                    <dl class="kwes-flags">
+                        <dt><code>--config-dir &lt;path&gt;</code></dt>
+                        <dd>
+                            Directory holding <code>pipeline.yaml</code>, <code>tools.yaml</code>,
+                            and <code>profiles/</code>. <b>Default:</b> the <code>config/</code>
+                            directory of the KWES checkout the command was installed from. Accepted
+                            by <code>validate</code>, <code>doctor</code>, and <code>scan</code>.
+                            <b>It changes where configuration is read from; it cannot change what
+                            the configuration is allowed to permit</b> — every value is still
+                            validated on load, and the run aborts on an invalid one rather than
+                            silently substituting a default.
+                        </dd>
+
+                        <dt><code>--profile &lt;name&gt;</code></dt>
+                        <dd>
+                            Profile name under <code>config/profiles/</code>. <b>Default:</b>
+                            <code>safe</code>. Shipped values: <code>safe</code>, <code>fast</code>,
+                            <code>deep</code>. Accepted by <code>validate</code>,
+                            <code>doctor</code>, and <code>scan</code>. <b>It cannot grant a
+                            capability the scope document withholds</b> — the run uses the
+                            intersection of the two, so a <code>deep</code> profile against a scope
+                            file with <code>directory_fuzzing: false</code> still has the
+                            content-discovery stage refused, and the refusal is recorded in the
+                            manifest as that stage's outcome.
+                        </dd>
+
+                        <dt><code>--scope &lt;path&gt;</code> <b>· required</b></dt>
+                        <dd>
+                            Path to the scope file authorizing this run. Required by
+                            <code>validate</code> and <code>scan</code>; there is no default, and no
+                            <code>--target</code> alternative exists. <code>doctor</code> does
+                            <em>not</em> accept it — it checks your toolchain, not your
+                            authorization, and reads the bundled
+                            <code>targets/scope.example.yaml</code> internally so it can load a
+                            pipeline at all.
+                        </dd>
+
+                        <dt><code>--severity &lt;list&gt;</code></dt>
+                        <dd>
+                            Comma-separated severities to run templates for, drawn from
+                            <code>info,low,medium,high,critical</code>. <b>Default:</b> unset — the
+                            profile's own list applies. Accepted by <code>validate</code> and
+                            <code>scan</code>. This is the single biggest lever on runtime: critical
+                            alone is roughly a quarter of the time of low-and-above.
+                            <b>It narrows a profile and cannot widen one.</b> A severity set sharing
+                            nothing with the profile is refused rather than honoured, and the
+                            narrowing is recorded in the manifest so a report states the severities
+                            that actually ran rather than the ones the profile permits.
+                        </dd>
+
+                        <dt><code>--rate &lt;n&gt;</code></dt>
+                        <dd>
+                            Cap requests per second to the target for this run. <b>Default:</b>
+                            unset — <code>target_rate_limit</code> from
+                            <code>config/tools.yaml</code> applies (shipped: <code>10</code>).
+                            Accepted by <code>validate</code> and <code>scan</code>. Must be a
+                            positive integer no greater than the configured budget.
+                            <b>It can only lower the budget, never raise it.</b> Raising is a
+                            deliberate edit to <code>config/tools.yaml</code>, because that file is
+                            what the run manifest records and what the authorization rests on.
+                            Lowering pulls concurrency down with it — leaving 25 sockets open while
+                            sending 5 requests a second is a connection flood with a slow request
+                            rate, which is what a target's monitoring actually notices.
+                        </dd>
+                    </dl>
+
+                    <div class="kwes-term">
+                        <div class="kwes-term__bar"><span class="kwes-term__dot"></span><span class="kwes-term__dot"></span><span class="kwes-term__dot"></span><span class="kwes-term__title">the two one-directional flags, refusing</span></div>
+                        <pre>$ kwes validate --scope targets/scope.yaml --rate 50
+<s>rate error: --rate 50 is above the configured budget of 10 req/s. This flag can
+only lower it. Raising the budget is a deliberate edit to config/tools.yaml,
+because that file is what the run manifest records and what the authorization
+rests on.</s>
+<i>exit 1</i>
+
+$ kwes validate --scope targets/scope.yaml --severity info
+<s>severity error: profile 'safe' runs ['low', 'medium', 'high', 'critical'] and you
+asked for ['info']; the two have nothing in common, so the scan would check
+nothing. A severity flag narrows a profile - it cannot re-enable what the profile
+turned off.</s>
+<i>exit 1</i></pre>
+                    </div>
+
+                    <!-- ---- version ---- -->
+                    <h3 id="cli-version">kwes version</h3>
+                    <div class="kwes-term">
+                        <pre>kwes version</pre>
+                    </div>
+                    <p>
+                        <b>Purpose:</b> print the KWES version.
+                        <b>Arguments:</b> none, required or optional.
+                        <b>Network traffic:</b> none.
+                        <b>Output:</b> one line, <code>kwes &lt;version&gt;</code>.
+                        <b>Exit:</b> 0.
+                    </p>
+                    <p>
+                        Minimal and realistic are the same invocation here; the realistic use is
+                        recording which build produced a run alongside its manifest.
+                    </p>
+                    <div class="kwes-term">
+                        <div class="kwes-term__bar"><span class="kwes-term__dot"></span><span class="kwes-term__dot"></span><span class="kwes-term__dot"></span><span class="kwes-term__title">kwes version</span></div>
+                        <pre>kwes 0.1.0</pre>
+                    </div>
+
+                    <!-- ---- validate ---- -->
+                    <h3 id="cli-validate">kwes validate</h3>
+                    <div class="kwes-term">
+                        <pre>kwes validate --scope &lt;path&gt; [--profile &lt;name&gt;] [--config-dir &lt;path&gt;]
+                             [--severity &lt;list&gt;] [--rate &lt;n&gt;]</pre>
+                    </div>
+                    <p>
+                        <b>Purpose:</b> load and check all configuration without running anything. It
+                        answers "would this start, and what exactly would it be allowed to do"
+                        without sending a single packet.
+                    </p>
+                    <p>
+                        <b>Required:</b> <code>--scope</code>.
+                        <b>Optional:</b> <code>--profile</code> (default <code>safe</code>),
+                        <code>--config-dir</code>, <code>--severity</code>, <code>--rate</code> —
+                        all as described above.
+                        <b>Network traffic:</b> none.
+                    </p>
+                    <p>
+                        <b>Configuration interactions:</b> it loads <code>pipeline.yaml</code>,
+                        <code>tools.yaml</code>, the named profile, the template-routing and CDN
+                        range tables, and your scope file; checks every stage name against the
+                        adapter registry, so a typo in <code>pipeline.yaml</code> fails here rather
+                        than after earlier stages have sent traffic; then runs the same
+                        traffic-budget check <code>scan</code> runs, refusing a configuration whose
+                        stages would together exceed <code>target_rate_limit</code>.
+                    </p>
+                    <p>
+                        <b>Output:</b> <code>configuration is valid</code> followed by the resolved
+                        profile, the enabled stage order, the target and discovery rate limits with
+                        the tools drawing on each, concurrency, the severities that would run,
+                        allowlist sizes, and the granted capabilities — shown as the intersection of
+                        profile and scope.
+                    </p>
+                    <p>
+                        <b>Exit:</b> 0 when valid. 1 on a configuration error, a traffic-budget
+                        violation, a <code>--rate</code> above the budget or not positive, or a
+                        <code>--severity</code> set that shares nothing with the profile.
+                    </p>
+                    <h4>Minimal</h4>
+                    <div class="kwes-term">
+                        <pre>kwes validate --scope targets/scope.yaml</pre>
+                    </div>
+                    <h4>Realistic</h4>
+                    <p>
+                        Confirming that tonight's gentler, critical-only pass over a fragile batch
+                        would start — and printing what it would be allowed to do — before
+                        committing to it:
+                    </p>
+                    <div class="kwes-term">
+                        <pre>kwes validate --scope targets/payments-batch.yaml \
+              --profile fast --severity critical --rate 5</pre>
+                    </div>
+
+                    <!-- ---- doctor ---- -->
+                    <h3 id="cli-doctor">kwes doctor</h3>
+                    <div class="kwes-term">
+                        <pre>kwes doctor [--config-dir &lt;path&gt;] [--profile &lt;name&gt;]</pre>
+                    </div>
+                    <p>
+                        <b>Purpose:</b> check that every tool an enabled stage needs is actually
+                        installed. Separate from <code>validate</code>, which only reads files: this
+                        runs each tool with its version flag and checks nuclei's template set is
+                        present.
+                    </p>
+                    <p>
+                        <b>Required:</b> none.
+                        <b>Optional:</b> <code>--config-dir</code>, <code>--profile</code> (default
+                        <code>safe</code>). Notably <b>it takes no <code>--scope</code></b> — your
+                        environment is the same whatever you are authorized to scan.
+                        <b>Network traffic:</b> none. Each binary is invoked locally with its version
+                        flag.
+                    </p>
+                    <p>
+                        <b>Configuration interactions:</b> which tools are checked follows from which
+                        stages <code>pipeline.yaml</code> enables and which binary names
+                        <code>tools.yaml</code> gives them, so disabling a stage stops
+                        <code>doctor</code> demanding its tool. <b>It cannot install anything</b> —
+                        KWES does not install tools or download templates, because that would change
+                        your environment and make the run depend on whichever version happened to be
+                        current today.
+                    </p>
+                    <p>
+                        <b>Output:</b> one line per enabled stage — <code>ok</code> with the reported
+                        version, or <code>MISSING</code> with the binary name that is not on PATH.
+                        The nuclei entry additionally prints its resolved templates directory. Ends
+                        with <code>all required tools are present</code>, or a count of problems.
+                    </p>
+                    <p>
+                        <b>Exit:</b> 0 when everything is present. 1 when any binary is missing, when
+                        the nuclei template set is missing, or when configuration fails to load.
+                    </p>
+                    <h4>Minimal</h4>
+                    <div class="kwes-term">
+                        <pre>kwes doctor</pre>
+                    </div>
+                    <h4>Realistic</h4>
+                    <p>
+                        A scheduled pre-flight on a machine only ever used for estate-wide sweeps,
+                        checked against the exact profile those sweeps use:
+                    </p>
+                    <div class="kwes-term">
+                        <pre>kwes doctor --profile fast</pre>
+                    </div>
+
+                    <!-- ---- scan ---- -->
+                    <h3 id="cli-scan">kwes scan</h3>
+                    <div class="kwes-term">
+                        <pre>kwes scan --scope &lt;path&gt; [--profile &lt;name&gt;] [--config-dir &lt;path&gt;]
+                         [--runs-dir &lt;path&gt;] [--dry-run] [--verbose | -v]
+                         [--resume &lt;run_id&gt;] [--severity &lt;list&gt;] [--rate &lt;n&gt;]
+                         [--incremental]</pre>
+                    </div>
+                    <p>
+                        <b>Purpose:</b> run the configured pipeline against an authorized scope.
+                        Order comes from <code>config/pipeline.yaml</code>, not from the CLI, and
+                        every target a tool discovers is re-checked against the scope file before the
+                        next stage can touch it.
+                    </p>
+                    <p>
+                        <b>Required:</b> <code>--scope</code>.
+                        <b>Network traffic:</b> yes — this is the command that sends it — unless
+                        <code>--dry-run</code> is given.
+                    </p>
+
+                    <h4>Options specific to scan</h4>
+                    <dl class="kwes-flags">
+                        <dt><code>--runs-dir &lt;path&gt;</code></dt>
+                        <dd>
+                            Where run directories are created. <b>Default:</b> <code>runs/</code> in
+                            the KWES checkout. Also where <code>incremental-state.json</code> is
+                            looked for. <b>It changes where evidence is written, not what is
+                            collected.</b>
+                        </dd>
+
+                        <dt><code>--dry-run</code></dt>
+                        <dd>
+                            <b>Default:</b> off. Print the exact argv each stage would run, plus the
+                            contents of the target list files, and send nothing. The preview is
+                            deliberately built <b>without</b> an incremental effort policy, so it
+                            shows the widest thing the pipeline could send — a preview narrowed by
+                            last night's state would understate the commands, and an operator reads
+                            a preview and believes it. Stages whose real input only exists once
+                            earlier stages have run are labelled as showing placeholders.
+                            <b>It cannot create a run directory or produce findings.</b>
+                        </dd>
+
+                        <dt><code>--verbose</code>, <code>-v</code></dt>
+                        <dd>
+                            <b>Default:</b> off. Adds detail to the live trace: the target names
+                            themselves, a per-second heartbeat with observed throughput, which
+                            invocation is running, and a running total. The stage-by-stage trace is
+                            always shown regardless. <b>It deliberately cannot show a percentage or
+                            an estimated finish time</b> — none of the orchestrated tools reports how
+                            much work remains, so any completion figure would be a guess printed as a
+                            fact.
+                        </dd>
+
+                        <dt><code>--resume &lt;run_id&gt;</code></dt>
+                        <dd>
+                            <b>Default:</b> unset — a new run id is generated. Continue an existing
+                            run id, replaying stages already marked <code>done</code> from their
+                            preserved raw output. Parsing and normalization are pure functions of
+                            that output, so the same state is rebuilt and <b>no traffic is sent for
+                            those stages.</b>
+                        </dd>
+
+                        <dt><code>--incremental</code></dt>
+                        <dd>
+                            <b>Default:</b> off. Give the full check set only to hosts that need it:
+                            those whose fingerprint changed, whose last scan did not finish or did
+                            not cover this run's severities, those the check corpus has moved on
+                            from, and any host past the configured age limit. Every skipped host is
+                            named in the manifest and the summary with the date it is relying on.
+                            <b>Requires <code>config/incremental.yaml</code></b>; without that file
+                            the flag is refused rather than defaulted, because the maximum age is the
+                            worst-case window in which a newly vulnerable host goes unchecked, and
+                            that number has to be one somebody chose and reviewed.
+                            <b>It can only remove hosts from a list scope already approved — it has
+                            no route to add one</b>, and every uncertainty (unreadable state, a
+                            missing fingerprint, an unmeasurable check corpus) resolves to
+                            <em>scan</em>.
+                        </dd>
+                    </dl>
+
+                    <p>
+                        <b>Output:</b> the run directory path, then a live per-stage trace, then a
+                        summary — per-stage status and record counts, host / endpoint / finding
+                        totals (<code>findings: N (all unverified)</code>), refused targets broken
+                        down by reason rather than totalled, any findings withheld on third-party
+                        addresses, elapsed time, the measured check-corpus digest, and any hosts an
+                        effort policy held back. Files land under
+                        <code>runs/&lt;run_id&gt;/</code>, and <code>reports/summary.md</code> is
+                        written at the end.
+                    </p>
+                    <p>
+                        <b>Exit:</b> 0 on a clean run. 1 if any stage finished <code>failed</code> —
+                        a partial result is not a clean one, so a scheduled run cannot report success
+                        while a tool silently did not run. Also 1 on the configuration, budget,
+                        <code>--rate</code>, <code>--severity</code>, and
+                        missing-<code>incremental.yaml</code> errors described above. Ctrl-C
+                        (<code>SIGINT</code>) and <code>SIGTERM</code> do not kill the process
+                        directly: they set a cancellation flag, and the runner terminates the running
+                        tool's whole process group.
+                    </p>
+                    <h4>Minimal</h4>
+                    <div class="kwes-term">
+                        <pre>kwes scan --scope targets/scope.yaml</pre>
+                    </div>
+                    <h4>Realistic</h4>
+                    <p>
+                        The first of the two passes — an estate-wide triage sweep, narrowed to
+                        critical templates to fit the window, with the live trace on because it will
+                        run for hours:
+                    </p>
+                    <div class="kwes-term">
+                        <pre>kwes scan --scope targets/scope.yaml \
+          --profile fast --severity critical --verbose</pre>
+                    </div>
+                    <p>And picking that run back up after it was interrupted:</p>
+                    <div class="kwes-term">
+                        <pre>kwes scan --scope targets/scope.yaml --resume 20260727T204420Z-f904</pre>
+                    </div>
+                </section>
+
+                <!-- ---------- 9. output contract ---------- -->
+                <section id="output">
+                    <h2>Output contract</h2>
+
+                    <p>Each run writes to <code>runs/&lt;run_id&gt;/</code>:</p>
+
+                    <div class="kwes-term">
+                        <div class="kwes-term__bar"><span class="kwes-term__dot"></span><span class="kwes-term__dot"></span><span class="kwes-term__dot"></span><span class="kwes-term__title">runs/&lt;run_id&gt;/</span></div>
+                        <pre>runs/&lt;run_id&gt;/
+├── raw/&lt;tool&gt;/                   <i># original tool output, unmodified except redaction</i>
+├── normalized/
+│   ├── assets.jsonl              <i># hosts, and what each stage learned</i>
+│   ├── endpoints.jsonl           <i># URLs and API routes</i>
+│   └── findings.jsonl            <i># normalized findings</i>
+├── reports/summary.md            <i># coverage, counts, affected assets</i>
+└── manifest.json                 <i># scope, authorization, tool versions,</i>
+                                  <i># per-stage status, refused targets</i></pre>
+                    </div>
+
+                    <h3>Why raw output is preserved</h3>
+                    <p>
+                        <strong>Normalization is lossy, and a finding without its source evidence
+                        cannot be validated</strong> — which makes it worthless in a report. Given
+                        that every stage produces false positives in a documented way, the evidence
+                        is not an archival nicety: it is the only thing that lets an analyst turn a
+                        candidate into a confirmed finding, or dismiss it. Raw output is redacted
+                        before it is written, so preserving it does not mean preserving secrets.
+                    </p>
+
+                    <h3>Crash safety and resume</h3>
+                    <p>
+                        <strong>Records are appended as they arrive</strong>, so a crash in a later
+                        stage never destroys earlier results. <code>assets.jsonl</code> is an append
+                        log during the run and is collapsed to one record per host, atomically, at
+                        the end; if the run dies first the uncollapsed log survives, which loses
+                        nothing.
+                    </p>
+                    <p>
+                        <strong><code>manifest.json</code> is the resume point.</strong> Parsing and
+                        normalization are pure functions of preserved raw output, so
+                        <code>kwes scan --resume &lt;run_id&gt;</code> rebuilds the same state and
+                        sends no traffic for stages already marked <code>done</code>.
+                    </p>
+                    <p>
+                        <code>runs/incremental-state.json</code> sits <em>beside</em> run directories
+                        because it describes what is true across runs. It is derived, never
+                        authoritative: it records what happened and grants nothing. Deleting it is
+                        always safe and costs one full scan.
+                    </p>
+                    <p>
+                        <code>runs/</code> is gitignored. It contains findings, raw output, and
+                        evidence from real infrastructure — treat a run directory with the same care
+                        as the report you write from it.
+                    </p>
+                </section>
+
+                <!-- ---------- 10. links ---------- -->
+                <section id="links">
+                    <h2>Links</h2>
+                    <ul>
+                        <li>
+                            <a href="https://github.com/aykhan019/kwes" target="_blank" rel="noopener">GitHub repository</a>
+                            — source, issues, and the README this page is drawn from.
+                        </li>
+                        <li>
+                            <a href="https://github.com/aykhan019/kwes/blob/main/LICENSE" target="_blank" rel="noopener">LICENSE</a>
+                            — Apache-2.0. KWES orchestrates tools it does not vendor; each retains
+                            its own license.
+                        </li>
+                        <li>
+                            <a href="https://github.com/aykhan019/kwes/blob/main/SECURITY.md" target="_blank" rel="noopener">SECURITY.md</a>
+                            — acceptable use, private vulnerability reporting, and what counts as a
+                            vulnerability in a tool whose most serious defects are the ones that make
+                            it act outside the permission it was given.
+                        </li>
+                    </ul>
+                    <p><a href="/projects/">← All projects</a></p>
+                </section>
+
+            </div><!-- /.kwes-doc -->
+        </div><!-- /.kwes-layout -->
+    </div>
+</section>
+
+<script src="/home/js/shell.js"></script>
+<script>
+// Re-apply a deep link once the page has stopped growing. The shared head loads
+// IBM Plex from Google Fonts and shell.js injects the nav and footer, so this
+// document's height changes after first paint; on a page this long that moves a
+// linked section by thousands of pixels and the browser's initial fragment
+// scroll lands short. The table of contents itself needs no JavaScript — this
+// only corrects a cold deep link.
+(function () {
+  if (!location.hash) return;
+  function reanchor() {
+    var el = document.getElementById(location.hash.slice(1));
+    // 'instant' on purpose: two of these can fire, and a smooth animation
+    // restarted midway lands wherever it had got to.
+    if (el) el.scrollIntoView({ behavior: 'instant', block: 'start' });
+  }
+  window.addEventListener('load', reanchor);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(reanchor);
+})();
+</script>
+</body>
+
+</html>
