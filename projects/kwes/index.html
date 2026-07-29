@@ -156,7 +156,9 @@
   font-size: 1.05rem !important;
   line-height: 1.68 !important;
 }
-.kwes-meta {
+/* Scoped to .kwes-doc so `padding: 0` outranks the `.kwes-doc ul` list indent —
+   otherwise the badge row sits 1.15rem right of the heading and body text. */
+.kwes-doc .kwes-meta {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
