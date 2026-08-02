@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html data-theme="dark">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>KC2: Kapital C2 | aykhan.net</title>
+    <meta name="description" content="Documentation for KC2, a self-contained Node.js lab that reproduces npm lifecycle-script code execution — a trojanized demo package, an outbound-only HTTP task broker, and an operator console — for security education and detection engineering.">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="msapplication-tap-highlight" content="no">
+    <link rel="icon" type="image/x-icon"
+        href="https://res.cloudinary.com/dbriqxpaa/image/upload/v1680096853/Logo/logo-xl-ico_qzbf7d.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/home/css/site.css" />
+    <script>(function(){try{var s=localStorage.getItem('theme');var t=s||(window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+</head>
+
+<body>
+<!-- Page-local styles live in <body> because tools/build-heads.js rewrites every
+     page's head from tools/head.html, so a stylesheet link added up there would be
+     dropped by the next `pnpm build`. Nothing here is needed by another page. -->
+<style>
+.kc2 {
+  --ok:   #3fb950;
+  --warn: #f06449;
+  --rule: var(--card-line);
+}
+:root[data-theme="light"] .kc2 { --ok: #1a7f37; --warn: #d03a1f; }
+
+/* ---------- two-column shell: sticky nav rail + document ---------- */
+.kc2-layout {
+  display: grid;
+  grid-template-columns: 15rem minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: start;
+}
+/* minmax(0, 1fr) is what stops a wide table stretching the grid track and
+   pushing the whole page sideways. Every scroller below depends on it. */
+
+.kc2-toc {
+  position: sticky;
+  top: 5.5rem;
+  align-self: start;
+  max-height: calc(100vh - 7rem);
+  overflow-y: auto;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--surface-2);
+}
+.kc2-toc h2 {
+  margin: 0 0 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--first-color);
+}
+.kc2-toc ol { list-style: none; margin: 0; padding: 0; }
+.kc2-toc li { margin: 0; }
+.kc2-toc a {
+  display: block;
+  padding: 0.28rem 0 0.28rem 0.6rem;
+  margin-left: -0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.79rem;
+  line-height: 1.4;
+  color: var(--text-soft);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.kc2-toc a:hover { color: var(--heading); border-left-color: var(--first-color); }
+.kc2-toc .kc2-toc__sub a { padding-left: 1.5rem; font-size: 0.74rem; }
+/* Set by the scroll-spy below. --is-parent marks the ancestor of an active
+   sub-item so a top-level entry stays lit while reading one of its children. */
+.kc2-toc a.is-active {
+  color: var(--first-color);
+  border-left-color: var(--first-color);
+  background: rgba(35, 90, 166, 0.09);
+}
+.kc2-toc a.is-parent-active { color: var(--heading); border-left-color: var(--card-line); }
+
+@media (max-width: 900px) {
+  /* Collapse into normal document flow: nothing sticks, nothing overlaps the
+     text, and the reader scrolls past it once. */
+  .kc2-layout { grid-template-columns: minmax(0, 1fr); }
+  .kc2-toc {
+    position: static;
+    max-height: none;
+    overflow: visible;
+    margin-bottom: 2rem;
+  }
+  .kc2-toc ol { columns: 2; column-gap: 1.2rem; }
+  .kc2-toc .kc2-toc__sub { display: none; }
+}
+@media (max-width: 480px) {
+  .kc2-toc ol { columns: 1; }
+}
+
+/* ---------- document typography ---------- */
+.kc2-doc { min-width: 0; }
+.kc2-doc h2 {
+  margin: 3rem 0 0.9rem;
+  font-size: clamp(1.3rem, 2.2vw, 1.65rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--heading);
+}
+.kc2-doc > section:first-of-type h2 { margin-top: 0; }
+.kc2-doc h3 {
+  margin: 2.1rem 0 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 1.02rem;
+  font-weight: 500;
+  color: var(--heading);
+}
+.kc2-doc h4 {
+  margin: 1.5rem 0 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+}
+.kc2-doc p, .kc2-doc li {
+  font-size: 0.95rem;
+  line-height: 1.72;
+  color: var(--text);
+}
+.kc2-doc p { margin: 0 0 1rem; }
+.kc2-doc ul, .kc2-doc ol { margin: 0 0 1.1rem; padding-left: 1.15rem; }
+.kc2-doc li { margin-bottom: 0.45rem; }
+.kc2-doc a { color: var(--first-color); text-decoration: none; border-bottom: 1px solid transparent; }
+.kc2-doc a:hover { border-bottom-color: var(--first-color); }
+/* No scroll-margin-top here: site.css already sets scroll-padding-top: 5rem on
+   <html>, and the two would stack into a large gap above a linked section. */
+.kc2-doc strong { color: var(--heading); font-weight: 600; }
+.kc2-doc code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  padding: 0.1em 0.36em;
+  border-radius: 5px;
+  background: var(--surface-2);
+  border: 1px solid var(--rule);
+  color: var(--text);
+  overflow-wrap: break-word;
+}
+
+/* ---------- lede + badge row ---------- */
+.kc2-lede {
+  font-size: 1.05rem !important;
+  line-height: 1.68 !important;
+}
+/* Scoped to .kc2-doc so `padding: 0` outranks the `.kc2-doc ul` list indent —
+   otherwise the badge row sits 1.15rem right of the heading and body text. */
+.kc2-doc .kc2-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0 0 1.6rem;
+  padding: 0;
+  list-style: none;
+}
+.kc2-meta li { margin: 0; }
+.kc2-meta a, .kc2-meta span {
+  display: inline-block;
+  padding: 0.3rem 0.55rem;
+  white-space: nowrap;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--surface-2);
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.02em;
+  color: var(--text-soft);
+  text-decoration: none;
+}
+.kc2-meta a:hover { border-color: var(--first-color); color: var(--first-color); }
+/* Kapital Bank mark, recoloured onto the page palette: the K takes the accent,
+   the wordmark inherits the badge text colour so it follows the theme. */
+.kc2-meta .kc2-meta__brand {
+  display: inline-flex;
+  align-items: center;
+  min-height: calc(1.27rem + 0.6rem + 2px); /* line box + block padding + borders (border-box) */
+  padding-inline: 0.45rem;
+}
+.kc2-meta__brand svg { display: block; height: 1.1rem; width: auto; fill: currentColor; }
+.kc2-brand__mark { fill: var(--first-color); }
+
+/* ---------- callouts ---------- */
+.kc2-callout {
+  margin: 0 0 1.6rem;
+  padding: 1.05rem 1.25rem;
+  border-radius: 12px;
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--first-color);
+  background: var(--surface-2);
+}
+.kc2-callout > :last-child { margin-bottom: 0; }
+.kc2-callout--danger { border-left-color: var(--warn); }
+.kc2-callout__label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--first-color);
+}
+.kc2-callout--danger .kc2-callout__label { color: var(--warn); }
+
+/* ---------- terminal blocks ---------- */
+.kc2-term {
+  margin: 0 0 1.4rem;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--surface-2);
+}
+.kc2-term__bar {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.85rem;
+  border-bottom: 1px solid var(--rule);
+  background: var(--surface);
+}
+.kc2-term__dot { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; }
+.kc2-term__dot:nth-child(1) { background: #ff5f56; }
+.kc2-term__dot:nth-child(2) { background: #ffbd2e; }
+.kc2-term__dot:nth-child(3) { background: #27c93f; }
+.kc2-term__title {
+  margin-left: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.73rem;
+  color: var(--text-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.kc2-term pre {
+  margin: 0;
+  padding: 0.95rem 1.1rem;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.795rem;
+  line-height: 1.62;
+  color: var(--text);
+}
+.kc2-term pre b { color: var(--heading); font-weight: 500; }
+.kc2-term pre i { color: var(--text-soft); font-style: normal; }
+.kc2-term pre u { color: var(--ok); text-decoration: none; }
+.kc2-term pre s { color: var(--warn); text-decoration: none; }
+
+/* ---------- tables ---------- */
+.kc2-scroll {
+  margin: 0 0 1.5rem;
+  overflow-x: auto;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--surface-2);
+}
+.kc2-scroll table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.83rem;
+  line-height: 1.6;
+}
+.kc2-scroll th, .kc2-scroll td {
+  padding: 0.62rem 0.85rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--rule);
+}
+.kc2-scroll thead th {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  white-space: nowrap;
+  background: var(--surface);
+}
+.kc2-scroll tbody th {
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: var(--heading);
+  white-space: nowrap;
+}
+.kc2-scroll tbody tr:last-child td, .kc2-scroll tbody tr:last-child th { border-bottom: 0; }
+.kc2-nowrap { white-space: nowrap; }
+
+/* ---------- architecture diagram ---------- */
+/* The source PNG is baked with an opaque white background (it's a diagram
+   export, not a photo), so it can't blend into a dark surface on its own.
+   surface-2 is already white in the light theme (seamless) and a near-black
+   tint in the dark theme, which frames the white diagram like a print in a
+   mat rather than letting it collide edge-to-edge with the page. */
+.kc2-diagram {
+  margin: 0 0 0.6rem;
+  padding: 1.1rem;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--surface-2);
+}
+.kc2-diagram img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+.kc2-diagram figcaption {
+  margin: 1.1rem 0 1.6rem;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--text-soft);
+  font-style: italic;
+}
+</style>
+
+<section class="case-studies kc2" itemscope itemprop="mainContentOfPage">
+    <div class="content">
+        <div class="section-text-mask">
+            <h4 class="h5 section-subtitle">Project · Security tooling</h4>
+        </div>
+        <div class="section-text-mask">
+            <h2 class="h3 section-title">KC2: Kapital C2</h2>
+        </div>
+
+        <div class="kc2-layout">
+
+            <!-- ============ sticky table of contents (no JavaScript) ============ -->
+            <nav class="kc2-toc" aria-label="On this page">
+                <h2>On this page</h2>
+                <ol>
+                    <li><a href="#overview">What KC2 is</a></li>
+                    <li><a href="#authorized-use">Authorized use only</a></li>
+                    <li><a href="#why-lifecycle">Why lifecycle scripts matter</a></li>
+                    <li><a href="#attack-chain">The attack chain</a></li>
+                    <li><a href="#design-decisions">Design decisions</a>
+                        <ol class="kc2-toc__sub">
+                            <li><a href="#design-postinstall">Postinstall stub</a></li>
+                            <li><a href="#design-cover-story">Cover story</a></li>
+                            <li><a href="#design-dead-drop">Dead-drop tasking</a></li>
+                            <li><a href="#design-one-shot">One-shot jobs</a></li>
+                        </ol>
+                    </li>
+                    <li><a href="#safety-model">The safety model</a></li>
+                    <li><a href="#quick-start">Quick start</a>
+                        <ol class="kc2-toc__sub">
+                            <li><a href="#qs-server">Start the server</a></li>
+                            <li><a href="#qs-install">Install the package</a></li>
+                            <li><a href="#qs-task">Task the host</a></li>
+                        </ol>
+                    </li>
+                    <li><a href="#console-reference">Operator console reference</a></li>
+                    <li><a href="#api-reference">HTTP API reference</a></li>
+                    <li><a href="#configuration">Configuration reference</a></li>
+                    <li><a href="#detection-engineering">Detection engineering</a></li>
+                    <li><a href="#mitre-mapping">MITRE ATT&amp;CK mapping</a></li>
+                    <li><a href="#limitations">Known limitations</a></li>
+                    <li><a href="#validation">Validation</a></li>
+                    <li><a href="#repo-layout">Repository layout</a></li>
+                    <li><a href="#links">Links</a></li>
+                </ol>
+            </nav>
+
+            <!-- ============ document ============ -->
+            <div class="kc2-doc">
+
+                <!-- ---------- 1. what and why ---------- -->
+                <section id="overview">
+                    <h2>What KC2 is</h2>
+
+                    <ul class="kc2-meta">
+                        <li><span class="kc2-meta__brand">
+                            <svg viewBox="0 0 200 35.512" role="img" aria-label="Kapital Bank">
+                                <title>Kapital Bank</title>
+                                <g transform="translate(-190.841 -737.419)">
+                                    <path class="kc2-brand__mark" d="M226.351,737.422v0H190.845v.006L208.6,755.18Z"/>
+                                    <path class="kc2-brand__mark" fill-opacity="0.78" d="M190.845,737.419h0v35.507L208.6,755.169Z"/>
+                                    <path class="kc2-brand__mark" fill-opacity="0.58" d="M190.841,772.927v0h35.509v-.006L208.6,755.169Z"/>
+                                    <path d="M240.26,754.987l9.879,10.346v.233H245.36l-8.587-9.086v9.086H232.9V745.052h3.868v8.674l7.8-8.674h4.806v.112Z"/>
+                                    <path d="M260.4,758.8c0-1.812-1.237-3.764-3.214-3.764S254,756.991,254,758.8s1.211,3.8,3.19,3.8,3.214-1.98,3.214-3.8m3.409,6.762h-3.8v-1.238h-.054a4.659,4.659,0,0,1-3.656,1.68c-3.956,0-6.213-3.6-6.213-7.257,0-3.575,2.284-7.121,6.158-7.121a4.991,4.991,0,0,1,3.765,1.7v-1.265h3.8Z"/>
+                                    <path d="M277.113,758.8c0-1.812-1.209-3.764-3.189-3.764s-3.188,1.952-3.188,3.764,1.211,3.8,3.188,3.8,3.189-1.98,3.189-3.8m-5.992-5.5a4.97,4.97,0,0,1,3.737-1.678c3.822,0,6.159,3.576,6.159,7.122,0,3.681-2.254,7.258-6.242,7.258a4.466,4.466,0,0,1-3.6-1.707h-.054v8.466h-3.848v-20.7h3.848Z"/>
+                                    <path d="M287.527,765.564h-3.849v-13.5h3.849Zm.358-19.157a2.282,2.282,0,1,1-2.284-2.283A2.277,2.277,0,0,1,287.885,746.407Z"/>
+                                    <path d="M295.443,765.565H291.6V755.314h-1.321v-3.246H291.6v-4.56h3.846v4.56h2.366v3.246h-2.366Z"/>
+                                    <path d="M308.692,758.8c0-1.812-1.237-3.764-3.215-3.764s-3.19,1.952-3.19,3.764,1.21,3.8,3.19,3.8,3.215-1.98,3.215-3.8m3.41,6.762h-3.8v-1.238h-.053a4.659,4.659,0,0,1-3.655,1.68c-3.958,0-6.213-3.6-6.213-7.257,0-3.575,2.284-7.121,6.158-7.121a4.987,4.987,0,0,1,3.763,1.7v-1.265h3.8Z"/>
+                                    <path d="M332.3,762.322h2.528c2.172,0,4.043-.277,4.043-2.97s-2.2-2.8-4.235-2.8H332.3Zm0-8.852h2.173c1.978,0,2.939-.575,2.939-2.723,0-2.113-1.21-2.664-2.914-2.664h-2.2Zm-4.04-8.632h6.707c3.845,0,6.211,1.514,6.211,5.638a4.746,4.746,0,0,1-1.814,4.014c2.447.438,3.543,2.91,3.543,5.194,0,4.067-2.856,5.881-6.622,5.881H328.26Z"/>
+                                    <path d="M355.055,758.8c0-1.812-1.237-3.764-3.214-3.764s-3.188,1.952-3.188,3.764,1.209,3.8,3.188,3.8,3.214-1.98,3.214-3.8m3.409,6.762h-3.793v-1.238h-.054a4.667,4.667,0,0,1-3.656,1.68c-3.96,0-6.213-3.6-6.213-7.257,0-3.575,2.283-7.121,6.157-7.121a4.991,4.991,0,0,1,3.766,1.7v-1.265h3.793Z"/>
+                                    <path d="M365.774,753.306h.056a4.027,4.027,0,0,1,3.517-1.678c3.63,0,4.673,2.56,4.673,5.692v8.244h-3.849v-7.147c0-1.621.083-3.707-2.086-3.707-2.282,0-2.311,2.555-2.311,4.178v6.676h-3.848v-13.5h3.848Z"/>
+                                    <path d="M381.3,757.017h.054l4.041-4.948h5l-5.693,5.939,6.13,7.555h-5.057l-4.425-5.741H381.3v5.741h-3.851V742.257H381.3Z"/>
+                                </g>
+                                <rect width="3.849" height="23.306" transform="translate(124.721 4.84)"/>
+                            </svg>
+                        </span></li>
+                        <li><a href="https://github.com/aykhan019/kc2" target="_blank" rel="noopener">github.com/aykhan019/kc2</a></li>
+                        <li><span>Node.js 18+</span></li>
+                        <li><span>No runtime dependencies</span></li>
+                    </ul>
+
+                    <p class="kc2-lede">
+                        <strong>KC2: Kapital C2</strong> is a self-contained Node.js lab that
+                        reproduces one specific supply-chain risk end to end: npm lifecycle scripts
+                        execute package code automatically during <code>npm install</code>, with the
+                        installing user's privileges and no prompt. The lab models the control
+                        channel an attacker would build on top of that foothold — a small HTTP task
+                        broker, a file-based task queue, and an interactive operator console — and
+                        pairs it with a trojanized-but-functional demo package whose
+                        <code>postinstall</code> hook starts a background agent on the test host.
+                    </p>
+
+                    <p>
+                        The implementation uses only Node.js built-ins. There are no runtime
+                        dependencies, no database, and no external service. Every file is short
+                        enough to read in one sitting, and the comments are written to be read — the
+                        codebase is the teaching material.
+                    </p>
+
+                    <div class="kc2-callout">
+                        <span class="kc2-callout__label">What it is not</span>
+                        <p>
+                            KC2 is <strong>not a command-and-control framework</strong>, and it is not
+                            a red-team operations tool. It deliberately implements none of the
+                            capabilities that make real malware dangerous: no persistence, no evasion,
+                            no obfuscation, no credential theft, no file collection, no encryption.
+                            Those omissions are safety rails, not missing features. The attack
+                            mechanism it demonstrates — code execution on install — is a
+                            <em>documented npm feature</em>, and the lab exists so that defenders,
+                            students, and reviewers can watch it happen under controlled conditions.
+                        </p>
+                    </div>
+
+                    <p>
+                        This page is ordered so a reader can stop at any point and have gotten
+                        something: the legal constraint first, then the mechanism and why it matters,
+                        then the architecture, then how to run the lab, then the references and the
+                        detections.
+                    </p>
+                </section>
+
+                <!-- ---------- 2. authorized use ---------- -->
+                <section id="authorized-use">
+                    <h2>Authorized use only</h2>
+
+                    <div class="kc2-callout kc2-callout--danger">
+                        <span class="kc2-callout__label">Read this before running anything</span>
+                        <p>
+                            KC2 demonstrates behavior that would be unlawful against systems you do
+                            not own. <strong>Running it against any machine you do not own or lack
+                            written authorization to test is illegal in most jurisdictions</strong> —
+                            including the Computer Fraud and Abuse Act (US), the Computer Misuse Act
+                            (UK), and equivalents elsewhere. Authorization is the user's
+                            responsibility, not the tool's.
+                        </p>
+                    </div>
+
+                    <p>Three rules follow, and the lab is built around them:</p>
+
+                    <ul>
+                        <li>
+                            <strong>Localhost by default.</strong> The server binds to
+                            <code>127.0.0.1</code> and the agent points at <code>127.0.0.1</code> out
+                            of the box. Reaching another machine requires a deliberate configuration
+                            change on both ends.
+                        </li>
+                        <li>
+                            <strong>Never expose the broker to the public internet.</strong> The HTTP
+                            API has no authentication and no encryption by design — it is a localhost
+                            teaching artifact. A two-machine lab belongs on a private test network
+                            behind host firewall rules.
+                        </li>
+                        <li>
+                            <strong>Never publish the package.</strong>
+                            <code>totally-legit-utils</code> must not be uploaded to the npm registry
+                            or installed on any third-party system. Remove the test agent after every
+                            session: <code>pkill -f "victim-package/agent.js"</code>.
+                        </li>
+                    </ul>
+
+                    <p>
+                        Keep experiments isolated, obtain written authorization for anything beyond
+                        your own machines, and treat the lab's output the way you would treat any
+                        offensive-security training material.
+                    </p>
+                </section>
+
+                <!-- ---------- 3. why lifecycle scripts ---------- -->
+                <section id="why-lifecycle">
+                    <h2>Why npm lifecycle scripts are worth a lab</h2>
+
+                    <p>
+                        When you run <code>npm install</code>, npm executes the package's lifecycle
+                        scripts — <code>preinstall</code>, <code>install</code>,
+                        <code>postinstall</code> — as shell commands, automatically, with your
+                        privileges. No vulnerability is involved; this is how the ecosystem is
+                        specified to work, and legitimate packages use it to compile native modules.
+                    </p>
+
+                    <p>
+                        Real incidents abused exactly this mechanism.
+                        <code>event-stream</code> shipped a malicious dependency to millions of
+                        weekly downloads through a maintainer handover. <code>ua-parser-js</code> and
+                        <code>coa</code>/<code>rc</code> were hijacked and published with install-time
+                        stealers. Typosquats — <code>crossenv</code> against <code>cross-env</code>,
+                        <code>lodahs</code> against <code>lodash</code> — exist almost entirely to run
+                        a lifecycle hook on a developer's machine. The hook runs with the developer's
+                        tokens, SSH keys, and CI secrets within reach, and it runs before anyone has
+                        read a line of the package's code.
+                    </p>
+
+                    <p>
+                        The uncomfortable part, and the reason the lab exists:
+                        <strong>nothing about this is exotic.</strong> There is no memory corruption,
+                        no sandbox escape, no zero-day. The entire attack is a documented feature used
+                        as documented, plus a process-management detail — and that detail is where
+                        KC2 spends its teaching effort.
+                    </p>
+                </section>
+
+                <!-- ---------- 4. attack chain ---------- -->
+                <section id="attack-chain">
+                    <h2>The attack chain</h2>
+
+                    <div class="kc2-term">
+                        <pre> npm install totally-legit-utils
+        |
+        v  [1] postinstall hook runs synchronously, with the victim's privileges
+ install.js
+        |
+        v  [2] spawns a DETACHED agent process, prints nothing suspicious, exits 0
+ agent.js (background)
+        |
+        +--&gt; [3] BEACON   POST /api/beacon    host info; learns its agent id and observed IP
+        +--&gt; [4] POLL     GET  /api/taskfile  every 5 s; matches jobs by observed IP
+        +--&gt; [5] EXECUTE  one-shot shell command, with the victim's privileges
+        +--&gt; [6] REPORT   POST /api/results   stdout/stderr; server consumes the job</pre>
+                    </div>
+
+                    <figure class="kc2-diagram">
+                        <img src="https://media.aykhan.net/assets/images/projects/kc2/kc2-beacon-architecture.png"
+                             alt="KC2 architecture: operator console queues commands into a dead-drop task file served over HTTP; the test-host agent beacons, polls, executes, and reports">
+                        <figcaption>
+                            KC2 architecture — operator console, dead-drop task file, and the
+                            beacon/poll/report loop. Three logical roles. In the localhost lab they
+                            share one machine; in an authorized two-machine lab the KC2 server and
+                            the test host are separate devices on a private network.
+                        </figcaption>
+                    </figure>
+                </section>
+
+                <!-- ---------- 5. design decisions ---------- -->
+                <section id="design-decisions">
+                    <h2>The design decisions that make it realistic</h2>
+
+                    <p>
+                        A lab that behaves nothing like the real thing teaches nothing. Four details
+                        in KC2 mirror what actual trojanized packages do, and each is there for a
+                        reason.
+                    </p>
+
+                    <h3 id="design-postinstall">The postinstall stub exists so the install looks normal</h3>
+                    <p>
+                        npm runs lifecycle scripts <strong>synchronously</strong> — the install does
+                        not finish until the script exits. An agent loop placed directly in
+                        <code>postinstall</code> makes the victim's <code>npm install</code> appear to
+                        hang forever, which is a dead giveaway. Real trojanized packages avoid this:
+                        the hook spawns a <strong>detached</strong> background process
+                        (<code>detached: true</code>, <code>stdio: 'ignore'</code>,
+                        <code>child.unref()</code>) and immediately exits 0. npm reports success, the
+                        install is fast, and the agent keeps running afterwards.
+                        <code>victim-package/install.js</code> is exactly that stub — its whole job is
+                        launching <code>agent.js</code> and getting out of the way.
+                    </p>
+                    <p>
+                        Unlike real malware, the lab prints one line —
+                        <code>[kc2] install ok — agent running in background</code> — because a
+                        teaching tool stays observable. Real malware is silent here. That single
+                        difference is worth stating aloud in a classroom.
+                    </p>
+
+                    <h3 id="design-cover-story">The package has a cover story</h3>
+                    <p>
+                        Real trojanized packages are rarely empty; they provide genuinely useful code
+                        so people keep them installed, or they copy the source of the package they
+                        impersonate. <code>totally-legit-utils</code> ships two working string
+                        utilities (<code>capitalize</code>, <code>reverse</code>) in
+                        <code>index.js</code>. The victim gets functioning code and never suspects the
+                        install hook already ran. When reviewing a suspicious package, working code is
+                        not evidence of safety — it is the expected camouflage.
+                    </p>
+
+                    <h3 id="design-dead-drop">Tasking is a dead drop, and all traffic is outbound</h3>
+                    <p>
+                        The operator never connects to a test host. The console writes jobs into a
+                        task file; the server serves that file over HTTP; agents poll it. This is the
+                        dead-drop pattern, and it matters for one reason:
+                        <strong>outbound connections pass through firewalls and NAT, inbound ones do
+                        not.</strong> A lab that required inbound access to the victim would be
+                        teaching a channel that fails in the real world. The three requests — beacon,
+                        poll, report — are all initiated by the agent.
+                    </p>
+
+                    <h3 id="design-one-shot">Tasks are one-shot jobs, not a single overwritten command</h3>
+                    <p>
+                        Each <code>task</code> command appends an independent job (<code>id</code>,
+                        <code>ip</code>, <code>command</code>) to the queue. Multiple jobs can be
+                        pending for the same host. The agent tracks the job ids it has already
+                        started, runs each new id exactly once, and posts the result with that id; the
+                        server removes the job when the matching result arrives. A job lives exactly
+                        until its result comes back — the queue on disk is always the set of things
+                        still owed, which makes <code>tasks.yaml</code> a human-readable audit of
+                        unfinished tasking at any moment.
+                    </p>
+                </section>
+
+                <!-- ---------- 6. safety model ---------- -->
+                <section id="safety-model">
+                    <h2>The safety model</h2>
+
+                    <p>
+                        The limits below are deliberate. They are enforced by simply not existing in
+                        the code, and they should not be "fixed" for realism — the lab's value is that
+                        the dangerous parts are absent and the instructive parts are faithful.
+                    </p>
+
+                    <ul>
+                        <li>
+                            <strong>No persistence.</strong> The agent installs no launch hooks and
+                            dies at reboot or logout. Stop it any time with
+                            <code>pkill -f "victim-package/agent.js"</code>.
+                        </li>
+                        <li>
+                            <strong>No evasion or obfuscation.</strong> Every file is plain, commented
+                            JavaScript. Detection rules written against this lab key on real behavior
+                            — process lineage, polling cadence, endpoint shapes — not on artifacts of
+                            packing.
+                        </li>
+                        <li>
+                            <strong>No collection.</strong> The agent runs what the operator queues
+                            and reports the output. It does not enumerate files, read credentials, or
+                            stage data.
+                        </li>
+                        <li>
+                            <strong>No encryption, no authentication.</strong> The broker speaks plain
+                            HTTP with no auth. That is a property to <em>discuss</em> in detection
+                            engineering — what would TLS change about your network detections? — not a
+                            hole to patch in a localhost lab.
+                        </li>
+                        <li>
+                            <strong>Graceful degradation, not hiding.</strong> If the server is
+                            unreachable at install time, the agent exits silently — as real malware
+                            would — and only a later package run retries. If the server
+                            <em>restarts</em>, the agent re-beacons after three failed polls, because
+                            a restarted server has forgotten all agents.
+                        </li>
+                    </ul>
+                </section>
+
+                <!-- ---------- 7. quick start ---------- -->
+                <section id="quick-start">
+                    <h2>Quick start</h2>
+
+                    <p>
+                        Requirements: Node.js 18 or newer, npm, and two terminals. Nothing needs to be
+                        installed for the server or the agent themselves.
+                    </p>
+
+                    <h3 id="qs-server">1. Start the server</h3>
+                    <div class="kc2-term">
+                        <pre>node server/server.js</pre>
+                    </div>
+                    <p>
+                        The server binds to <code>127.0.0.1:4444</code> and opens the
+                        <code>kc2&gt;</code> operator console.
+                    </p>
+
+                    <h3 id="qs-install">2. Install the package in a disposable directory</h3>
+                    <div class="kc2-term">
+                        <div class="kc2-term__bar"><span class="kc2-term__dot"></span><span class="kc2-term__dot"></span><span class="kc2-term__dot"></span><span class="kc2-term__title">install into a disposable directory</span></div>
+                        <pre>mkdir -p /tmp/kc2-victim && cd /tmp/kc2-victim
+npm init -y
+npm install /absolute/path/to/kc2/victim-package</pre>
+                    </div>
+                    <p>The console reports the check-in:</p>
+                    <div class="kc2-term">
+                        <div class="kc2-term__bar"><span class="kc2-term__dot"></span><span class="kc2-term__dot"></span><span class="kc2-term__dot"></span><span class="kc2-term__title">kc2&gt; console</span></div>
+                        <pre>[+] NEW AGENT #1  lab@testbox
+           ip=127.0.0.1  platform=Linux x64
+           -&gt; task it with:  task 1 &lt;command&gt;</pre>
+                    </div>
+                    <p>
+                        To demonstrate the <strong>defense</strong> instead of the attack, repeat with
+                        scripts disabled — the install succeeds and no agent ever starts:
+                    </p>
+                    <div class="kc2-term">
+                        <pre>npm install --ignore-scripts /absolute/path/to/kc2/victim-package</pre>
+                    </div>
+
+                    <h3 id="qs-task">3. Task the host and read the results</h3>
+                    <div class="kc2-term">
+                        <div class="kc2-term__bar"><span class="kc2-term__dot"></span><span class="kc2-term__dot"></span><span class="kc2-term__dot"></span><span class="kc2-term__title">kc2&gt; console</span></div>
+                        <pre>kc2&gt; task 1 whoami
+kc2&gt; task 1 hostname
+kc2&gt; task 1 pwd
+kc2&gt; history</pre>
+                    </div>
+                    <p>Each result arrives as the agent's next poll picks up the job:</p>
+                    <div class="kc2-term">
+                        <div class="kc2-term__bar"><span class="kc2-term__dot"></span><span class="kc2-term__dot"></span><span class="kc2-term__dot"></span><span class="kc2-term__title">kc2&gt; console</span></div>
+                        <pre>[&lt;] RESULT from agent #1 (ip=127.0.0.1, task #1)
+           $ whoami
+           lab</pre>
+                    </div>
+                    <p>Stop the lab when finished:</p>
+                    <div class="kc2-term">
+                        <pre>pkill -f "victim-package/agent.js"</pre>
+                    </div>
+                </section>
+
+                <!-- ---------- 8. operator console reference ---------- -->
+                <section id="console-reference">
+                    <h2>Operator console reference</h2>
+
+                    <div class="kc2-scroll">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Command</th>
+                                    <th>Purpose</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>agents</code></td>
+                                    <td>List checked-in test hosts: id, user@host, ip, platform, last seen, pending jobs</td>
+                                </tr>
+                                <tr>
+                                    <td><code>task &lt;id|ip&gt; &lt;command&gt;</code></td>
+                                    <td>Queue one one-shot shell command (repeatable — jobs never overwrite)</td>
+                                </tr>
+                                <tr>
+                                    <td><code>untask &lt;id|ip&gt;</code></td>
+                                    <td>Cancel all pending jobs for a host</td>
+                                </tr>
+                                <tr>
+                                    <td><code>tasks</code></td>
+                                    <td>Show the pending queue (the live contents of <code>tasks.yaml</code>)</td>
+                                </tr>
+                                <tr>
+                                    <td><code>history [n]</code></td>
+                                    <td>Show the latest <code>n</code> results; defaults to 10. The buffer holds the last 100, in memory only</td>
+                                </tr>
+                                <tr>
+                                    <td><code>help</code></td>
+                                    <td>Command help</td>
+                                </tr>
+                                <tr>
+                                    <td><code>exit</code></td>
+                                    <td>Stop the server (Ctrl+D or piped-stdin EOF also exits)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p>
+                        Targets resolve by agent id (<code>task 1 …</code>) or literal IP
+                        (<code>task 10.0.0.5 …</code>). Re-checkins from the same user@host at the
+                        same IP reuse the existing agent id rather than flooding the list — an agent
+                        that restarts is the same agent.
+                    </p>
+                </section>
+
+                <!-- ---------- 9. HTTP API reference ---------- -->
+                <section id="api-reference">
+                    <h2>HTTP API reference</h2>
+
+                    <p>Plain HTTP, no authentication — localhost lab only.</p>
+
+                    <div class="kc2-scroll">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Method</th>
+                                    <th>Path</th>
+                                    <th>Body</th>
+                                    <th>Response</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="kc2-nowrap"><code>POST</code></td>
+                                    <td class="kc2-nowrap"><code>/api/beacon</code></td>
+                                    <td><code>{hostname, username, platform}</code></td>
+                                    <td><code>{agentId, ip}</code></td>
+                                    <td>Deduplicates on ip + username + hostname; the returned <code>ip</code> is the server's view of the client and becomes the task-queue key</td>
+                                </tr>
+                                <tr>
+                                    <td class="kc2-nowrap"><code>GET</code></td>
+                                    <td class="kc2-nowrap"><code>/api/taskfile</code></td>
+                                    <td>—</td>
+                                    <td><code>text/plain</code></td>
+                                    <td>Regenerated from in-memory state on every request; updates the agent's <code>lastSeen</code></td>
+                                </tr>
+                                <tr>
+                                    <td class="kc2-nowrap"><code>POST</code></td>
+                                    <td class="kc2-nowrap"><code>/api/results</code></td>
+                                    <td><code>{taskId, agentId, ip, command, output}</code></td>
+                                    <td><code>{ok: true}</code></td>
+                                    <td>Consumes the matching one-shot job; results append to the bounded history buffer</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p>
+                        The task file is a strict YAML subset, parsed by the same small regex grammar
+                        on both ends — deliberately not a general YAML parser:
+                    </p>
+
+                    <div class="kc2-term">
+                        <div class="kc2-term__bar"><span class="kc2-term__dot"></span><span class="kc2-term__dot"></span><span class="kc2-term__dot"></span><span class="kc2-term__title">server/tasks.yaml</span></div>
+                        <pre>tasks:
+  - id: 12
+    ip: "127.0.0.1"
+    command: "whoami"</pre>
+                    </div>
+
+                    <p>
+                        <code>server/tasks.yaml</code> is <strong>regenerated by the console on every
+                        change</strong> and reloaded at boot, so a server restart does not wipe
+                        pending tasking. Never edit it by hand; the older id-less format is still
+                        accepted on load for backward compatibility and is upgraded automatically.
+                    </p>
+                </section>
+
+                <!-- ---------- 10. configuration reference ---------- -->
+                <section id="configuration">
+                    <h2>Configuration reference</h2>
+
+                    <div class="kc2-scroll">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Variable</th>
+                                    <th>Default</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="kc2-nowrap"><code>KC2_BIND</code></td>
+                                    <td class="kc2-nowrap"><code>127.0.0.1</code></td>
+                                    <td>Server bind address</td>
+                                </tr>
+                                <tr>
+                                    <td class="kc2-nowrap"><code>KC2_PORT</code></td>
+                                    <td class="kc2-nowrap"><code>4444</code></td>
+                                    <td>Server and agent port</td>
+                                </tr>
+                                <tr>
+                                    <td class="kc2-nowrap"><code>KC2_HOST</code></td>
+                                    <td class="kc2-nowrap"><code>127.0.0.1</code></td>
+                                    <td>Server address used by the agent</td>
+                                </tr>
+                                <tr>
+                                    <td class="kc2-nowrap"><code>KC2_COLOR</code></td>
+                                    <td class="kc2-nowrap">automatic</td>
+                                    <td><code>1</code> forces ANSI colors; <code>0</code> disables them</td>
+                                </tr>
+                                <tr>
+                                    <td class="kc2-nowrap"><code>NO_COLOR</code></td>
+                                    <td class="kc2-nowrap">unset</td>
+                                    <td>Standard terminal color opt-out</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p>
+                        Agent timing constants live at the top of
+                        <code>victim-package/agent.js</code>: a 5-second poll interval, and
+                        re-beaconing after 3 consecutive failed polls.
+                    </p>
+
+                    <p>An authorized two-machine lab on a private network:</p>
+                    <div class="kc2-term">
+                        <div class="kc2-term__bar"><span class="kc2-term__dot"></span><span class="kc2-term__dot"></span><span class="kc2-term__dot"></span><span class="kc2-term__title">authorized two-machine lab</span></div>
+                        <pre>KC2_BIND=192.168.1.42 node server/server.js
+KC2_HOST=192.168.1.42 npm install /absolute/path/to/kc2/victim-package</pre>
+                    </div>
+                </section>
+
+                <!-- ---------- 11. detection engineering ---------- -->
+                <section id="detection-engineering">
+                    <h2>Detection engineering</h2>
+
+                    <p>
+                        The lab is instrumented to be observable, and its behaviors are the ones real
+                        npm malware exhibits. Use it to validate detections before you need them.
+                    </p>
+
+                    <h4>Host-based indicators</h4>
+                    <ul>
+                        <li>Process lineage: a <code>node</code> process parented to <code>npm</code> that <strong>outlives the install</strong> — the detached-spawn signature</li>
+                        <li>A long-lived <code>node …/victim-package/agent.js</code> process with no terminal attached</li>
+                        <li><code>postinstall: "node install.js"</code> in a dependency that has no business running code at install time</li>
+                        <li>The lab's own transparency string in install logs: <code>[kc2] install ok — agent running in background</code></li>
+                    </ul>
+
+                    <h4>Network-based indicators</h4>
+                    <ul>
+                        <li>A fixed-cadence poll (<code>GET /api/taskfile</code> every 5 s) — beaconing intervals are detectable even when real malware adds jitter</li>
+                        <li><code>POST /api/beacon</code> carrying host inventory as JSON; <code>POST /api/results</code> carrying command output</li>
+                        <li>Plaintext HTTP from a developer workstation to an unusual destination port (default 4444)</li>
+                    </ul>
+
+                    <h4>Hardening takeaways</h4>
+                    <ul>
+                        <li>Prefer <code>npm install --ignore-scripts</code> whenever lifecycle scripts are not needed; set <code>npm config set ignore-scripts true</code> in controlled build environments.</li>
+                        <li>Use <code>npm ci</code> with reviewed lockfiles in isolated CI; review lockfile diffs and transitive dependencies, not just direct ones.</li>
+                        <li>Alert on package-manager child processes that persist after the install exits.</li>
+                        <li>Treat any postinstall behavior in a dependency as a review signal, not an implementation detail.</li>
+                    </ul>
+                </section>
+
+                <!-- ---------- 12. MITRE ATT&CK mapping ---------- -->
+                <section id="mitre-mapping">
+                    <h2>MITRE ATT&amp;CK mapping</h2>
+
+                    <div class="kc2-scroll">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Technique</th>
+                                    <th>Where in KC2</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="kc2-nowrap"><code>T1195.002</code> — Supply Chain Compromise: Compromise Software Supply Chain</td>
+                                    <td>Trojanized npm package, lifecycle-script execution</td>
+                                </tr>
+                                <tr>
+                                    <td class="kc2-nowrap"><code>T1059.007</code> — Command and Scripting Interpreter: JavaScript</td>
+                                    <td>Node.js agent</td>
+                                </tr>
+                                <tr>
+                                    <td class="kc2-nowrap"><code>T1059.004</code> / <code>T1059.003</code> — Unix Shell / Windows Command Shell</td>
+                                    <td>Task execution via <code>child_process.exec</code></td>
+                                </tr>
+                                <tr>
+                                    <td class="kc2-nowrap"><code>T1071.001</code> — Application Layer Protocol: Web Protocols</td>
+                                    <td>HTTP beacon / poll / result channel</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- ---------- 13. known limitations ---------- -->
+                <section id="limitations">
+                    <h2>Known limitations</h2>
+
+                    <p>
+                        Stated plainly, because a lab that hides its simplifications teaches false
+                        confidence:
+                    </p>
+
+                    <ul>
+                        <li>
+                            <strong>IP-keyed tasking.</strong> Jobs are matched by the IP the server
+                            observes. Two test hosts behind the same NAT or egress address share one
+                            identity in the queue — the lab's matching scheme, like many real ones,
+                            has no answer to that.
+                        </li>
+                        <li>
+                            <strong>Output size cap.</strong> Results larger than Node's default
+                            <code>exec</code> buffer (1 MB) fail; the error text becomes the result.
+                        </li>
+                        <li>
+                            <strong>First-contact failure is silent.</strong> If the server is down at
+                            install time the agent exits and does not retry until the package runs
+                            again. Re-beaconing covers server <em>restarts</em>, not failed first
+                            contact.
+                        </li>
+                        <li>
+                            <strong>Volatile history.</strong> The last 100 results live in server
+                            memory and vanish on exit; only the pending queue persists.
+                        </li>
+                        <li>
+                            <strong>No auth, no TLS.</strong> Anyone who can reach the broker can
+                            beacon, read the queue, or post results. Localhost use only — this is also
+                            why the binding defaults exist.
+                        </li>
+                        <li>
+                            <strong>No timestamp guarantees.</strong> Task ordering is queue order, and
+                            a host polls on its own schedule; nothing here is real-time.
+                        </li>
+                    </ul>
+                </section>
+
+                <!-- ---------- 14. validation ---------- -->
+                <section id="validation">
+                    <h2>Validation</h2>
+
+                    <p>
+                        There is no external test framework — the project is small enough that syntax
+                        checks plus a live smoke test are the honest bar:
+                    </p>
+
+                    <div class="kc2-term">
+                        <div class="kc2-term__bar"><span class="kc2-term__dot"></span><span class="kc2-term__dot"></span><span class="kc2-term__dot"></span><span class="kc2-term__title">syntax check</span></div>
+                        <pre>node --check server/server.js
+node --check victim-package/install.js
+node --check victim-package/agent.js
+node --check victim-package/index.js</pre>
+                    </div>
+
+                    <p>
+                        Then run the full loop by hand: server up, package installed into a disposable
+                        directory, <code>task 1 id</code>, and confirm the result returns and the job
+                        disappears from <code>tasks</code>.
+                    </p>
+                </section>
+
+                <!-- ---------- 15. repository layout ---------- -->
+                <section id="repo-layout">
+                    <h2>Repository layout</h2>
+
+                    <div class="kc2-term">
+                        <div class="kc2-term__bar"><span class="kc2-term__dot"></span><span class="kc2-term__dot"></span><span class="kc2-term__dot"></span><span class="kc2-term__title">kc2/</span></div>
+                        <pre>kc2/
+├── README.md
+├── docs/
+│   ├── diagram.svg          <i># rendered architecture diagram</i>
+│   └── kc2.mmd               <i># editable Mermaid source</i>
+├── server/
+│   ├── server.js            <i># task broker + operator console (single file)</i>
+│   └── tasks.yaml            <i># REGENERATED by the console — never edit by hand</i>
+└── victim-package/           <i># the trojanized demo package</i>
+    ├── package.json         <i># "totally-legit-utils", postinstall: node install.js</i>
+    ├── install.js            <i># postinstall stub: spawns the agent detached, exits 0</i>
+    ├── agent.js               <i># beacon / poll / execute / report loop</i>
+    └── index.js               <i># cover story: working string utilities</i></pre>
+                    </div>
+                </section>
+
+                <!-- ---------- 16. links ---------- -->
+                <section id="links">
+                    <h2>Links</h2>
+                    <ul>
+                        <li>
+                            <a href="https://github.com/aykhan019/kc2" target="_blank" rel="noopener">GitHub repository</a>
+                            — source, issues, and the README this page is drawn from.
+                        </li>
+                        <li>
+                            <a href="/projects/kwes/">KWES: Kapital Web Exposure Scanner</a>
+                            — the companion project: authorized external scanning for estates you own,
+                            where KC2 explores the supply-chain side of the same defensive problem.
+                        </li>
+                    </ul>
+                    <p>No license is declared yet; one will be added before the repository is redistributed.</p>
+                    <p><a href="/projects/">← All projects</a></p>
+                </section>
+
+            </div><!-- /.kc2-doc -->
+        </div><!-- /.kc2-layout -->
+    </div>
+</section>
+
+<script src="/home/js/shell.js"></script>
+<script>
+// Re-apply a deep link once the page has stopped growing. The shared head loads
+// IBM Plex from Google Fonts and shell.js injects the nav and footer, so this
+// document's height changes after first paint; on a page this long that moves a
+// linked section by thousands of pixels and the browser's initial fragment
+// scroll lands short. The table of contents itself needs no JavaScript — this
+// only corrects a cold deep link.
+(function () {
+  if (!location.hash) return;
+  function reanchor() {
+    var el = document.getElementById(location.hash.slice(1));
+    // 'instant' on purpose: two of these can fire, and a smooth animation
+    // restarted midway lands wherever it had got to.
+    if (el) el.scrollIntoView({ behavior: 'instant', block: 'start' });
+  }
+  window.addEventListener('load', reanchor);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(reanchor);
+})();
+
+// Scroll-spy: light the table-of-contents entry for the section being read.
+// Position-based rather than IntersectionObserver, because sections here differ
+// enormously in height — an observer keyed on visibility flickers between two
+// entries when a short section sits fully inside the viewport next to a long one.
+(function () {
+  var toc = document.querySelector('.kc2-toc');
+  if (!toc) return;
+  var links = [].slice.call(toc.querySelectorAll('a[href^="#"]'));
+  var items = links.map(function (a) {
+    return { link: a, el: document.getElementById(a.getAttribute('href').slice(1)) };
+  }).filter(function (i) { return i.el; });
+  if (!items.length) return;
+
+  var current = null;
+
+  function activate(item) {
+    if (item === current) return;
+    current = item;
+    links.forEach(function (a) { a.classList.remove('is-active', 'is-parent-active'); });
+    item.link.classList.add('is-active');
+
+    // Keep the enclosing top-level entry lit for nested items.
+    var li = item.link.closest('li');
+    var parentLi = li && li.parentElement && li.parentElement.closest('li');
+    var parentLink = parentLi && parentLi.querySelector('a');
+    if (parentLink) parentLink.classList.add('is-parent-active');
+
+    // Follow along inside the rail's own scrollbar, without moving the page.
+    var top = item.link.offsetTop, h = item.link.offsetHeight;
+    if (top < toc.scrollTop) toc.scrollTop = top - 8;
+    else if (top + h > toc.scrollTop + toc.clientHeight) toc.scrollTop = top + h - toc.clientHeight + 8;
+  }
+
+  function update() {
+    // The line the heading has to cross to count as "being read" — just under
+    // the fixed nav, matching the site's scroll-padding-top.
+    var line = 96;
+    var found = items[0];
+    for (var i = 0; i < items.length; i++) {
+      if (items[i].el.getBoundingClientRect().top <= line) found = items[i];
+    }
+    // At the very bottom nothing further can cross the line, so the last entry
+    // would never light up on a page ending in short sections.
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) {
+      found = items[items.length - 1];
+    }
+    activate(found);
+  }
+
+  var ticking = false;
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function () { ticking = false; update(); });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  window.addEventListener('load', update);
+  update();
+})();
+</script>
+</body>
+
+</html>
