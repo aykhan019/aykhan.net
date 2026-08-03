@@ -346,7 +346,7 @@
                     <li><a href="#attack-chain">The attack chain</a></li>
                     <li><a href="#design-decisions">Design decisions</a>
                         <ol class="kc2-toc__sub">
-                            <li><a href="#design-postinstall">Postinstall stub</a></li>
+                            <li><a href="#design-postinstall">Preinstall stub</a></li>
                             <li><a href="#design-cover-story">Cover story</a></li>
                             <li><a href="#design-dead-drop">Dead-drop tasking</a></li>
                             <li><a href="#design-one-shot">One-shot jobs</a></li>
@@ -415,7 +415,7 @@
                         channel an attacker would build on top of that foothold — a small HTTP task
                         broker, a file-based task queue, and an interactive operator console — and
                         pairs it with a trojanized-but-functional demo package whose
-                        <code>postinstall</code> hook starts a background agent on the test host.
+                        <code>preinstall</code> hook starts a background agent on the test host.
                     </p>
 
                     <p>
@@ -533,7 +533,7 @@
                     <div class="kc2-term">
                         <pre> npm install totally-legit-utils
         |
-        v  [1] postinstall hook runs synchronously, with the victim's privileges
+        v  [1] preinstall hook runs synchronously, with the victim's privileges
  install.js
         |
         v  [2] spawns a DETACHED agent process, prints nothing suspicious, exits 0
@@ -567,11 +567,14 @@
                         reason.
                     </p>
 
-                    <h3 id="design-postinstall">The postinstall stub exists so the install looks normal</h3>
+                    <h3 id="design-postinstall">The preinstall stub exists so the install looks normal</h3>
                     <p>
                         npm runs lifecycle scripts <strong>synchronously</strong> — the install does
-                        not finish until the script exits. An agent loop placed directly in
-                        <code>postinstall</code> makes the victim's <code>npm install</code> appear to
+                        not finish until the script exits. The hook name is interchangeable here: npm
+                        runs <code>preinstall</code>, <code>install</code>, and <code>postinstall</code>
+                        identically — synchronously, with the installing user's privileges. An agent
+                        loop placed directly in
+                        <code>preinstall</code> makes the victim's <code>npm install</code> appear to
                         hang forever, which is a dead giveaway. Real trojanized packages avoid this:
                         the hook spawns a <strong>detached</strong> background process
                         (<code>detached: true</code>, <code>stdio: 'ignore'</code>,
@@ -913,7 +916,7 @@ KC2_HOST=192.168.1.42 npm install /absolute/path/to/kc2/victim-package</pre>
                     <ul>
                         <li>Process lineage: a <code>node</code> process parented to <code>npm</code> that <strong>outlives the install</strong> — the detached-spawn signature</li>
                         <li>A long-lived <code>node …/victim-package/agent.js</code> process with no terminal attached</li>
-                        <li><code>postinstall: "node install.js"</code> in a dependency that has no business running code at install time</li>
+                        <li><code>preinstall: "node install.js"</code> in a dependency that has no business running code at install time</li>
                         <li>The lab's own transparency string in install logs: <code>[kc2] install ok — agent running in background</code></li>
                     </ul>
 
@@ -929,7 +932,7 @@ KC2_HOST=192.168.1.42 npm install /absolute/path/to/kc2/victim-package</pre>
                         <li>Prefer <code>npm install --ignore-scripts</code> whenever lifecycle scripts are not needed; set <code>npm config set ignore-scripts true</code> in controlled build environments.</li>
                         <li>Use <code>npm ci</code> with reviewed lockfiles in isolated CI; review lockfile diffs and transitive dependencies, not just direct ones.</li>
                         <li>Alert on package-manager child processes that persist after the install exits.</li>
-                        <li>Treat any postinstall behavior in a dependency as a review signal, not an implementation detail.</li>
+                        <li>Treat any install-time lifecycle script behavior in a dependency as a review signal, not an implementation detail.</li>
                     </ul>
                 </section>
 
@@ -1047,8 +1050,8 @@ node --check victim-package/index.js</pre>
 │   ├── server.js            <i># task broker + operator console (single file)</i>
 │   └── tasks.yaml            <i># REGENERATED by the console — never edit by hand</i>
 └── victim-package/           <i># the trojanized demo package</i>
-    ├── package.json         <i># "totally-legit-utils", postinstall: node install.js</i>
-    ├── install.js            <i># postinstall stub: spawns the agent detached, exits 0</i>
+    ├── package.json         <i># "totally-legit-utils", preinstall: node install.js</i>
+    ├── install.js            <i># preinstall stub: spawns the agent detached, exits 0</i>
     ├── agent.js               <i># beacon / poll / execute / report loop</i>
     └── index.js               <i># cover story: working string utilities</i></pre>
                     </div>
