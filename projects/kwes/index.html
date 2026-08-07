@@ -325,14 +325,18 @@
 .kwes-flags dd b { color: var(--text); font-weight: 500; }
 </style>
 
+<style>
+.kwes-hero{padding:0 0 2.2rem;border-bottom:1px solid var(--card-line)}.kwes-hero__eyebrow{margin:0 0 .55rem;color:var(--first-color);font:.74rem var(--font-mono);letter-spacing:.1em;text-transform:uppercase}.kwes-hero h1{max-width:18ch;margin:0 0 .85rem;color:var(--heading);font-size:clamp(2.1rem,5vw,3.65rem);line-height:1.08}.kwes-hero__lede{max-width:66ch;margin:0 0 1.2rem;color:var(--text);font-size:1.08rem;line-height:1.68}.kwes-hero__notice{max-width:900px;padding:1rem 1.15rem;border:1px solid var(--card-line);border-left:3px solid var(--warn);border-radius:10px;background:var(--surface-2)}.kwes-hero__notice b{display:block;margin-bottom:.4rem;color:var(--warn);font:.72rem var(--font-mono);letter-spacing:.09em;text-transform:uppercase}.kwes-hero__notice p{margin:0;color:var(--text);font-size:.95rem;line-height:1.65}.kwes-layout{margin-top:2.5rem}@media(max-width:620px){.kwes-hero h1{font-size:2.2rem}}
+</style>
+
 <section class="case-studies kwes" itemscope itemprop="mainContentOfPage">
     <div class="content">
-        <div class="section-text-mask">
-            <h4 class="h5 section-subtitle">Project · Security tooling</h4>
-        </div>
-        <div class="section-text-mask">
-            <h2 class="h3 section-title">KWES: Kapital Web Exposure Scanner</h2>
-        </div>
+        <header class="kwes-hero">
+            <p class="kwes-hero__eyebrow">Security research lab</p>
+            <h1>KWES — web exposure scanner</h1>
+            <p class="kwes-hero__lede">A configuration-driven security scanner that enforces an explicit authorization scope before established command-line tools can touch an asset.</p>
+            <div class="kwes-hero__notice"><b>Authorized research only</b><p>Use only assets and systems you own or are explicitly authorized to assess. KWES records evidence for human review; it does not replace professional validation.</p></div>
+        </header>
 
         <div class="kwes-layout">
 
